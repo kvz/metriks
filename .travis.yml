@@ -2,7 +2,7 @@ language: node_js
 node_js:
   - "0.10"
   - "0.8"
-script: make test
+script: make test-int
 before_install:
   - sudo -HE apt-get -y update
   - sudo -HE apt-get -y install rrdtool
