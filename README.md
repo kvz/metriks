@@ -1,3 +1,17 @@
+# Metriks
+
+<!-- badges/ -->
+[![Build Status](https://secure.travis-ci.org/kvz/metriks.png?branch=master)](http://travis-ci.org/kvz/metriks "Check this project's build status on TravisCI")
+[![NPM version](http://badge.fury.io/js/metriks.png)](https://npmjs.org/package/metriks "View this project on NPM")
+[![Dependency Status](https://david-dm.org/kvz/metriks.png?theme=shields.io)](https://david-dm.org/kvz/metriks)
+[![Development Dependency Status](https://david-dm.org/kvz/metriks/dev-status.png?theme=shields.io)](https://david-dm.org/kvz/metriks#info=devDependencies)
+
+[![Gittip donate button](http://img.shields.io/gittip/kvz.png)](https://www.gittip.com/kvz/ "Sponsor the development of metriks via Gittip")
+[![Flattr donate button](http://img.shields.io/flattr/donate.png?color=yellow)](https://flattr.com/submit/auto?user_id=kvz&url=https://github.com/kvz/metriks&title=metriks&language=&tags=github&category=software "Sponsor the development of metriks via Flattr")
+[![PayPayl donate button](http://img.shields.io/paypal/donate.png?color=yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=kevin%40vanzonneveld%2enet&lc=NL&item_name=Open%20source%20donation%20to%20Kevin%20van%20Zonneveld&currency_code=USD&bn=PP-DonationsBF%3abtn_donate_SM%2egif%3aNonHosted "Sponsor the development of metriks via Paypal")
+[![BitCoin donate button](http://img.shields.io/bitcoin/donate.png?color=yellow)](https://coinbase.com/checkouts/19BtCjLCboRgTAXiaEvnvkdoRyjd843Dg2 "Sponsor the development of metriks via BitCoin")
+<!-- /badges -->
+
 ## Features
 
  - Builds on `rrdtool`. The network industry standard of saving time-series data to disk with a constant storage footprint.
@@ -20,8 +34,8 @@
  - [ ] Support for max & min values and a way to communicate problems to the outside world
  - [ ] Support for different rrd types
  - [ ] More unit test coverage
- - [ ] Visually show / compare integration test
  - [ ] Dynamically expand ds using rrdtool dump / import. It's hard, see http://stackoverflow.com/questions/13476226/adding-new-datasource-to-an-existing-rrd
+ - [x] Visually show integration test
  - [x] One integration test
  - [x] Test cases
  - [x] Explodetree/flatten, use it for plug-in config (linecolour slice to array) and rrdtool info
@@ -33,14 +47,12 @@
  - [x] Async.parallel jobs
  - [x] Support for .go plugins
 
-## Prerequisites
-
 ### OSX
 
 http://xquartz.macosforge.org
 
 ```bash
-brew install rrdtool
+brew install rrdtool coreutils
 ```
 
 ### Ubuntu
