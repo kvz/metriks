@@ -1,12 +1,13 @@
-# Features
+## Features
 
- - Builds on RRD. The network industry standard of saving time-series data to disk with a constant storage footprint
- - Utilizes nodejs' async for optimal concurrency
- - Minimal dependencies and writes RRDs & images to disk, so it works when everything else is down.
- - Minimal effort to add new graphs
- - Thresholds pagers
+ - Builds on `rrdtool`. The network industry standard of saving time-series data to disk with a constant storage footprint.
+ - Build on `nodejs` for optimal concurrency and the ability to run a server without dealing with cgi-bin, etc.
+ - Minimal dependencies. If you have node.js/npm working, all you need is `aptitude install rrdtool` and you're ready to go
+ - Writes RRDs & images to disk, so it works when everything else is down.
+ - Minimal effort to add new graphs. Works by default.
+ - Can send out alerts when metric go outside boundaries
 
-# Todo
+## Todo
 
  - [ ] Refactor: Plugin, pluginmanager, graph, rrd, rrdtool, cli
  - [ ] _.template
@@ -29,39 +30,14 @@
  - [x] async.parallel jobs
  - [x] support for .go plugins
 
-# Reset
+
+## Test
 
 ```bash
-rm -rf /srv/shared/rrds/*
+make test
 ```
 
-# Poll
+## License
 
-```bash
-node index.js  --rrd-dir /srv/shared/rrds/  --png-dir /srv/shared/p/stats  --auto-write-png
-```
-
-# 1 Graph
-
-```bash
-rm /srv/current/*.png \
-&& node index.js \
- --rrd-dir /srv/shared/rrds \
- --png-dir /srv/shared/tmp/stats \
- --graph df \
-```
-
-# See
-
-On vagrant
-
-```bash
-rm /srv/current/*.png; cp -f /srv/shared/tmp/stats/*/*.png /srv/current/
-```
-
-On osx
-
-```bash
-open *.png
-```
+[MIT LICENSE](LICENSE)
 

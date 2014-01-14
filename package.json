@@ -1,6 +1,12 @@
 {
   "name": "metrik",
-  "version": "0.0.0",
+  "version": "0.0.1",
+  "description": "A lightweight graphing framework for servers",
+  "homepage": "https://github.com/kvz/metrik",
+  "author": "Kevin van Zonneveld <kevin@vanzonneveld.net>",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
   "dependencies": {
     "async": "0.2.9",
     "commander": "2.1.0",
@@ -10,5 +16,24 @@
     "flat": "1.1.0",
     "mocha": "~1.17.0"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "keywords": [
+    "graphing",
+    "metrics",
+    "rrd",
+    "munin",
+    "librato",
+    "graphite",
+    "lightweight",
+    "rrdtool"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kvz/metrik.git"
+  },
+  "readmeFilename": "README.md",
+  "scripts": {
+    "test": "make test"
+  },
+  "license": "MIT"
 }
