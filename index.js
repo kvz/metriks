@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 var program = require('commander');
-var metrik  = require('./lib/metrik');
+var metriks  = require('./lib/metriks');
 
-var workDir = (process.env.HOME || '/tmp') + '/metrik';
+var workDir = (process.env.HOME || '/tmp') + '/metriks';
 
 program
   .version('0.0.1')
@@ -21,10 +21,10 @@ var config = {
   autoWritePng: program.autoWritePng
 };
 
-var metrik = new metrik.Metrik(config);
+var metriks = new metriks.Metriks(config);
 
 if (program.graph) {
-  metrik.graph(program.graph);
+  metriks.graph(program.graph);
 } else {
-  metrik.start();
+  metriks.start();
 }

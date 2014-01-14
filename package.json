@@ -1,8 +1,8 @@
 {
-  "name": "metrik",
-  "version": "0.0.1",
+  "name": "metriks",
+  "version": "0.0.2",
   "description": "A lightweight graphing framework for servers",
-  "homepage": "https://github.com/kvz/metrik",
+  "homepage": "https://github.com/kvz/metriks",
   "author": "Kevin van Zonneveld <kevin@vanzonneveld.net>",
   "engines": {
     "node": ">= 0.8.0"
@@ -29,7 +29,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/kvz/metrik.git"
+    "url": "https://github.com/kvz/metriks.git"
   },
   "readmeFilename": "README.md",
   "scripts": {

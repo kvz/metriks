@@ -3,11 +3,11 @@
 __DIR__="$(cd "$(dirname "${0}")"; echo $(pwd))"
 
 
-rm -rf /tmp/metrik
+rm -rf /tmp/metriks
 
 timeout 2s node index.js \
- --png-dir /tmp/metrik/png \
- --rrd-dir /tmp/metrik/rrd \
+ --png-dir /tmp/metriks/png \
+ --rrd-dir /tmp/metriks/rrd \
  --auto-write-png \
  --plugin-dir ${__DIR__}/plugins
 
@@ -15,8 +15,8 @@ if [ "${?}" -ne 124 ]; then
   exit 1
 fi
 
-rrdtool info /tmp/metrik/rrd/one/$(hostname)-one.rrd |tee /tmp/metrik/info.txt
+rrdtool info /tmp/metriks/rrd/one/$(hostname)-one.rrd |tee /tmp/metriks/info.txt
 
-grep 'ds\[one\].last_ds = "1"' /tmp/metrik/info.txt || exit 1
+grep 'ds\[one\].last_ds = "1"' /tmp/metriks/info.txt || exit 1
 
 echo "Done. Integration test passed. "
