@@ -3,7 +3,7 @@
 __DIR__="$(cd "$(dirname "${0}")"; echo $(pwd))"
 set -x
 TIMEOUT=""
-[ -z "${TIMEOUT}" ] && which timeout >/dev/null 2>&1 && TIMEOUT=timout
+[ -z "${TIMEOUT}" ] && which timeout >/dev/null 2>&1 && TIMEOUT=timeout
 [ -z "${TIMEOUT}" ] && which gtimeout >/dev/null 2>&1 && TIMEOUT=gtimeout
 [ -z "${TIMEOUT}" ] && echo "No timeout command found. Required for integration test. " && exit 1
 
