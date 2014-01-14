@@ -12,24 +12,42 @@
  - [ ] Refactor: Plugin, pluginmanager, graph, rrd, rrdtool, cli
  - [ ] _.template
  - [ ] _.findWhere
- - [ ] Make test: step 1, imagick compare
- - [ ] Dynamically expand ds using export
- - [ ] Checkout smokeping sources
- - [ ] commander -> cli
- - [ ] test cases
- - [ ] save to s3
- - [ ] aggregate
- - [ ] max & min values
- - [ ] different rrd types
+ - [ ] Checkout smokeping sources and try to build a plugin very similar to it
+ - [ ] Move from commander npm to cli
+ - [ ] Something that can generate an index page/json of rrd/images
+ - [ ] Upload to s3 as a step after rrd -> graph -> upload
+ - [ ] Aggregate datasources into 1 graph using glob
+ - [ ] Support for max & min values and a way to communicate problems to the outside world
+ - [ ] Support for different rrd types
+ - [ ] More unit test coverage
+ - [ ] Visually show / compare integration test
+ - [ ] Dynamically expand ds using rrdtool dump / import. It's hard, see http://stackoverflow.com/questions/13476226/adding-new-datasource-to-an-existing-rrd
+ - [x] One integration test
+ - [x] Test cases
  - [x] Explodetree/flatten, use it for plug-in config (linecolour slice to array) and rrdtool info
  - [x] _.isNumeric
- - [x] librato colors
- - [x] graph options need to be interpretted
- - [x] configurable y-axis
+ - [x] Librato colors
+ - [x] Graph options need to be interpretted
+ - [x] Configurable y-axis
  - [x] Lose rrd.js over rrdtool.js
- - [x] async.parallel jobs
- - [x] support for .go plugins
+ - [x] Async.parallel jobs
+ - [x] Support for .go plugins
 
+## Prerequisites
+
+### OSX
+
+http://xquartz.macosforge.org
+
+```bash
+brew install rrdtool
+```
+
+### Ubuntu
+
+```bash
+aptitude install rrdtool
+```
 
 ## Test
 

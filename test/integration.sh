@@ -5,7 +5,7 @@ __DIR__="$(cd "$(dirname "${0}")"; echo $(pwd))"
 
 rm -rf /tmp/metriks
 
-timeout 2s node index.js \
+timeout 5s node index.js \
  --png-dir /tmp/metriks/png \
  --rrd-dir /tmp/metriks/rrd \
  --auto-write-png \
