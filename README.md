@@ -24,8 +24,6 @@
 ## Todo
 
  - [ ] Refactor: Plugin, pluginmanager, graph, rrd, rrdtool, cli
- - [ ] Retire thong.tmpl for _.template
- - [ ] Retire thong.sprintf for sprintf
  - [ ] _.findWhere
  - [ ] Checkout smokeping sources and try to build a plugin very similar to it
  - [ ] Something that can generate an index page/json of rrd/images
@@ -35,7 +33,9 @@
  - [ ] Support for different rrd types
  - [ ] More unit test coverage
  - [ ] Dynamically expand ds using rrdtool dump / import. It's hard, see http://stackoverflow.com/questions/13476226/adding-new-datasource-to-an-existing-rrd
- - [x] Move from commander npm to cli
+ - [x] Retire thong.tmpl for _.template
+ - [x] Retire thong.sprintf for util.format
+ - [x] Retire commander for cli
  - [x] Visually show integration test
  - [x] One integration test
  - [x] Test cases
