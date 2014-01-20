@@ -23,15 +23,15 @@
 
 ## Todo
 
- - [ ] _.findWhere
  - [ ] Checkout smokeping sources and try to build a plugin very similar to it
  - [ ] Something that can generate an index page/json of rrd/images
  - [ ] Upload to s3 as a step after rrd -> graph -> upload
  - [ ] Aggregate datasources into 1 graph using glob
  - [ ] Support for max & min values and a way to communicate problems to the outside world
  - [ ] Support for different rrd types
- - [ ] More unit test coverage
  - [ ] Dynamically expand ds using rrdtool dump / import. It's hard, see http://stackoverflow.com/questions/13476226/adding-new-datasource-to-an-existing-rrd
+ - [ ] More unit test coverage
+ - [x] _.findWhere
  - [x] Refactoring: Plugin
  - [x] Refactoring: pluginmanager
  - [x] Refactoring: rrdtool
