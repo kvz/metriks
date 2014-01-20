@@ -1,30 +1,38 @@
 #!/usr/bin/env node
-var program = require('commander');
-var metriks  = require('./lib/metriks');
-
+var cli     = require('cli').enable('status', 'help', 'version', 'glob', 'timeout');
+var metriks = require('./lib/metriks');
+var _       = require('underscore');
 var workDir = (process.env.HOME || '/tmp') + '/metriks';
 
-program
-  .version('0.0.1')
-  .option('-c, --concurrency [num]', 'How many plugins to run at once', 5)
-  .option('-a, --auto-write-png', 'Automatically write png files to png-dir')
-  .option('-g, --graph [plugin name or rrd file]')
-  .option('-p, --plugin-dir [dir]', 'Plugin directory. Overrules workDir. ', __dirname + '/plugins')
-  .option('-r, --rrd-dir [dir]', 'RRD directory. Overrules workDir. ', workDir + '/rrds')
-  .option('-i, --png-dir [dir]', 'Image / HTML directory. Overrules workDir. ', workDir + '/png')
-  .parse(process.argv);
+// --debug works out of the box. See -h
+cli.parse({
+  concurrency:      ['c', 'How many plugins to run at once', 'number', 5],
+  "auto-write-png": ['a', 'Automatically write png files to png-dir', 'boolean', false],
+  name:             ['n', 'Name of plugin or rrd file]', 'string' ],
+  "plugin-dir":     ['p', 'Plugin directory. Overrules workDir. ', 'path', __dirname + '/plugins' ],
+  "rrd-dir":        ['r', 'RRD directory. Overrules workDir. ', 'path', workDir + '/rrds' ],
+  "png-dir":        ['i', 'Image / HTML directory. Overrules workDir. ', 'path', workDir + '/png' ]
+});
 
-var config = {
-  pluginDir   : program.pluginDir,
-  rrdDir      : program.rrdDir,
-  pngDir      : program.pngDir,
-  autoWritePng: program.autoWritePng
-};
+cli.main(function(args, options) {
+  var self   = this;
+  var config = {};
+  _.each(options, function(val, key) {
+    var camelCased = key.replace(/-(.)/g, function (g) {
+      return g[1].toUpperCase();
+    });
 
-var metriks = new metriks.Metriks(config);
+    config[camelCased] = val;
+  });
 
-if (program.graph) {
-  metriks.graph(program.graph);
-} else {
-  metriks.start();
-}
+  config.cli = self;
+
+  var Metriks = new metriks.Metriks(config);
+
+  if (options.graph) {
+    Metriks.graph(program.graph);
+  } else {
+    Metriks.start();
+  }
+});
+

@@ -24,10 +24,10 @@
 ## Todo
 
  - [ ] Refactor: Plugin, pluginmanager, graph, rrd, rrdtool, cli
- - [ ] _.template
+ - [ ] Retire thong.tmpl for _.template
+ - [ ] Retire thong.sprintf for sprintf
  - [ ] _.findWhere
  - [ ] Checkout smokeping sources and try to build a plugin very similar to it
- - [ ] Move from commander npm to cli
  - [ ] Something that can generate an index page/json of rrd/images
  - [ ] Upload to s3 as a step after rrd -> graph -> upload
  - [ ] Aggregate datasources into 1 graph using glob
@@ -35,6 +35,7 @@
  - [ ] Support for different rrd types
  - [ ] More unit test coverage
  - [ ] Dynamically expand ds using rrdtool dump / import. It's hard, see http://stackoverflow.com/questions/13476226/adding-new-datasource-to-an-existing-rrd
+ - [x] Move from commander npm to cli
  - [x] Visually show integration test
  - [x] One integration test
  - [x] Test cases

@@ -9,7 +9,7 @@ TIMEOUT=""
 
 rm -rf /tmp/metriks
 
-${TIMEOUT} 5s node index.js \
+${TIMEOUT} 5s bin/metriks \
  --png-dir /tmp/metriks/png \
  --rrd-dir /tmp/metriks/rrd \
  --auto-write-png \
