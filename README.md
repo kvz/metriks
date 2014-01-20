@@ -23,7 +23,6 @@
 
 ## Todo
 
- - [ ] Refactor: Plugin, pluginmanager, graph, rrd, rrdtool, cli
  - [ ] _.findWhere
  - [ ] Checkout smokeping sources and try to build a plugin very similar to it
  - [ ] Something that can generate an index page/json of rrd/images
@@ -33,6 +32,10 @@
  - [ ] Support for different rrd types
  - [ ] More unit test coverage
  - [ ] Dynamically expand ds using rrdtool dump / import. It's hard, see http://stackoverflow.com/questions/13476226/adding-new-datasource-to-an-existing-rrd
+ - [x] Refactoring: Plugin
+ - [x] Refactoring: pluginmanager
+ - [x] Refactoring: rrdtool
+ - [x] Refactoring: cli
  - [x] Retire thong.tmpl for _.template
  - [x] Retire thong.sprintf for util.format
  - [x] Retire commander for cli

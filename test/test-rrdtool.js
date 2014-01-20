@@ -3,7 +3,7 @@ var RRDTool = require('../lib/rrdtool').RRDTool;
 var rrdtool = new RRDTool();
 
 var rrdFilePing        = __dirname + '/ping.rrd';
-var rrdFileTemp         = __dirname + '/temp.rrd';
+var rrdFileTemp        = __dirname + '/temp.rrd';
 var rrdFileNonexisting = __dirname + '/nonexisting.rrd';
 
 describe('rrdtool', function(){
