@@ -6,7 +6,7 @@ var workDir       = (process.env.HOME || '/tmp') + '/metriks';
 cli.parse({
   "web-port":       [false, 'If > 0, run a webserver on that port to browse graphs', 'number', 0],
   "concurrency":    [false, 'How many plugins to run at once', 'number', 5],
-  "auto-write-png": [false, 'Automatically write png files to png-dir', 'boolean', false],
+  "auto-write-png": [false, 'Automatically write png files to png-dir', 'boolean', true],
   "name":           [false, 'Name of plugin or rrd file]', 'string' ],
   "plugin-dir":     [false, 'Plugin directory. Overrules workDir. ', 'path', __dirname + '/plugins' ],
   "rrd-dir":        [false, 'RRD directory. Overrules workDir. ', 'path', workDir + '/rrds' ],
