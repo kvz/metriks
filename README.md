@@ -15,10 +15,11 @@
 ## Features
 
  - Builds on `rrdtool`. The network industry standard of saving time-series data to disk with a constant storage footprint.
- - Build on `nodejs` for optimal concurrency and the ability to run a server without dealing with cgi-bin, etc.
+ - Builds on `nodejs` for optimal concurrency and the ability to run a server without dealing with cgi-bin, etc.
  - Minimal dependencies. If you have node.js/npm working, all you need is `aptitude install rrdtool` and you're ready to go
  - Writes RRDs & images to disk, so it works when everything else is down.
  - Minimal effort to add new graphs. Works by default.
+ - Trivial to add graphs. Just write a single plugin file in any language. If it outputs numbers, metriks will graph it. Optionally output `# config.interval: 60`, `# graph.title: Load average` to finetune options. `\n` separate graph lines. Other whitespace separates graph label from value. See the [load plugin](https://github.com/kvz/metriks/blob/master/plugins/load.sh) for an example how to plot 3 load lines: 1 minute, 5 minute, 15 minute averages. 
  - Can send out alerts when metric go outside boundaries
 
 ## Todo
