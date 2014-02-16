@@ -8,10 +8,10 @@ if [ "${1}" = "config" ]; then
   exit 0
 fi
 
-echo "Google-8.8.8.8 $(ping -c 4 8.8.8.8 | tail -1| awk '{print $4}' | cut -d '/' -f 2)"
-echo "Level3-4.2.2.2 $(ping -c 4 4.2.2.2 | tail -1| awk '{print $4}' | cut -d '/' -f 2)"
-echo "OpenDNS-208.67.222.222 $(ping -c 4 208.67.222.222 | tail -1| awk '{print $4}' | cut -d '/' -f 2)"
-echo "AmazonEC2-172.16.0.23 $(ping -c 4 172.16.0.23 | tail -1| awk '{print $4}' | cut -d '/' -f 2)"
+echo "ip_8.8.8.8 $(ping -c 4 8.8.8.8 | tail -1| awk '{print $4}' | cut -d '/' -f 2)"
+echo "ip_4.2.2.2 $(ping -c 4 4.2.2.2 | tail -1| awk '{print $4}' | cut -d '/' -f 2)"
+echo "ip_208.67.222.222 $(ping -c 4 208.67.222.222 | tail -1| awk '{print $4}' | cut -d '/' -f 2)"
+echo "ip_172.16.0.23 $(ping -c 4 172.16.0.23 | tail -1| awk '{print $4}' | cut -d '/' -f 2)"
 
 # Don't let any error during ping crash metriks:
 exit 0
