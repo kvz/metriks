@@ -19,21 +19,21 @@
  - Minimal dependencies. If you have node.js/npm working, all you need is `aptitude install rrdtool` and you're ready to go
  - Writes RRDs & images to disk, so it works when everything else is down.
  - Idempotent. Metriks will create graphs that don't exist, and generally be eager to get you results.
- - Trivial to add graphs. It should Just Work by default. Write a plugin file in any language. If it output a number, metriks will graph it for you. You can optionally output configuration strings like `# config.interval: 60` or `# graph.title: Load average` to finetune behavior. Newlines (`\n`) separate graph lines. Other whitespaces separate graph label from value. See the [load plugin](https://github.com/kvz/metriks/blob/master/plugins/load.sh) for an example how to plot 3 load lines: 1 minute, 5 minute, 15 minute averages. 
- - Can send out alerts when metric go outside boundaries
+ - Trivial to add graphs. It should Just Work by default. Write a plugin file in any language. If it outputs a single number, metriks will graph it for you. You can optionally output configuration strings like `# config.interval: 60` or `# graph.title: Load average` to finetune behavior. Newlines (`\n`) separate graph lines. Other whitespaces separate graph label from value. See the [load plugin](https://github.com/kvz/metriks/blob/master/plugins/load.sh) for an example how to plot 3 load lines: 1 minute, 5 minute, 15 minute averages. 
+ - Can send out alerts when metrics go outside boundaries
 
 Metriks is basic. If you want advanced, there are plenty of options out there like graphite, mrtg, or (paid) librato. You may also want to have a look at druid, riemann and grafana.
 However **Metriks will never**:
 
  - Require you to deal with perl / cgi-bin / xml / apache / etc
  - Impose steep learning curves
- - Require networked components to be available to do it's job (in favor of graphing locally, optionally uploading & aggregating)
+ - Require networked components to be available to do it's job (in favor of graphing locally, optionally aggregating & uploading to e.g. S3)
  - Get in your way
  - Ask for money
 
 ## Todo
 
-Metriks is still in the early stages of development, here's what needs to be done still:
+Metriks is still in early stages of development, here's what needs to be done still:
 
  - [ ] More advanced rrd types (COUNTER vs GAUGE, ability to add a custom step, AREA graphs) as req in [#1](https://github.com/kvz/metriks/issues/1)
  - [ ] Offer an API that so that you can programatically add values in Nodejs programs. e.g. `require('metriks').graph('df').addSeries([{'/': '50%'}])`
