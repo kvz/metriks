@@ -90,8 +90,10 @@ npm install
 
 ## Run
 
+With debug output, and a built-in webserver to browser resulting png graphs on port 8000
+
 ```bash
-./bin/metriks --debug
+./bin/metriks --debug --web-port 8000
 ```
 
 ## Test
