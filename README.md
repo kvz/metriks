@@ -22,11 +22,12 @@
  - Trivial to add graphs. It should Just Work by default. Write a plugin file in any language. If it output a number, metriks will graph it for you. You can optionally output configuration strings like `# config.interval: 60` or `# graph.title: Load average` to finetune behavior. Newlines (`\n`) separate graph lines. Other whitespaces separate graph label from value. See the [load plugin](https://github.com/kvz/metriks/blob/master/plugins/load.sh) for an example how to plot 3 load lines: 1 minute, 5 minute, 15 minute averages. 
  - Can send out alerts when metric go outside boundaries
 
-Metriks is very basic. If you want advanced, there are plenty of options out there like graphite, mrtg.
+Metriks is very basic. If you want advanced, there are plenty of options out there like graphite, mrtg or (paid) librato.
 Metriks however will never:
 
  - Require you to know perl / cgi-bin / xml / apache / etc
  - Get in your way
+ - Ask you for money
 
 ## Todo
 
