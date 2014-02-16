@@ -23,16 +23,16 @@
 
 ## Todo
 
- - [ ] More advanced graphs (COUNTER vs GAUGE, ability to add a custom step, AREA graphs) as req in #1
+ - [ ] More advanced rrd types (COUNTER vs GAUGE, ability to add a custom step, AREA graphs) as req in [#1](https://github.com/kvz/metriks/issues/1)
  - [ ] Offer an API that so that you can programatically add values in Nodejs programs. e.g. `require('metriks').graph('df').addSeries([{'/': '50%'}])`
  - [ ] Checkout smokeping sources and try to build a plugin very similar to it. This should expose some limitations and make it more usable in different environments after fixing those.
  - [ ] Something that can generate an index page/json of rrd/images
  - [ ] Upload to s3 as a step after rrd -> graph -> upload
  - [ ] Aggregate datasources into 1 graph using glob
  - [ ] Support for max & min values and a way to communicate problems to the outside world
- - [ ] Support for different rrd types
  - [ ] Dynamically expand ds using rrdtool dump / import. It's hard, see http://stackoverflow.com/questions/13476226/adding-new-datasource-to-an-existing-rrd
  - [ ] More unit test coverage
+ - [ ] Add example section to readme with screenshots and plugin code
  - [x] _.findWhere
  - [x] Refactoring: Plugin
  - [x] Refactoring: pluginmanager
