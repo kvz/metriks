@@ -74,6 +74,8 @@ To run rrdtool on OSX you'll need [XQuartz](http://xquartz.macosforge.org). Then
 brew install rrdtool coreutils
 ```
 
+coreutils is required for `timeout`, used in integration tests.
+
 ### Ubuntu
 
 ```bash
