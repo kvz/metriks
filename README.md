@@ -54,9 +54,13 @@
  - [x] Async.parallel jobs
  - [x] Support for .go plugins
 
+## Prerequisites
+
+I'm assuming you already have node/npm and git installed.
+
 ### OSX
 
-http://xquartz.macosforge.org
+To run rrdtool on OSX you'll need [XQuartz](http://xquartz.macosforge.org). Then via brew:
 
 ```bash
 brew install rrdtool coreutils
@@ -66,6 +70,20 @@ brew install rrdtool coreutils
 
 ```bash
 aptitude install rrdtool
+```
+
+## Install
+
+```bash
+git clone https://github.com/kvz/metriks.git
+cd metriks
+npm install
+```
+
+## Run
+
+```bash
+./bin/metriks
 ```
 
 ## Test
