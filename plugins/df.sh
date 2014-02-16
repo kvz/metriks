@@ -6,7 +6,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   # OSX has limited df
   df -Thfs \
    |egrep -v ^Filesystem \
-   |awk '{print $1" "$5}' \
+   |awk '{print $NF" "$5}' \
    |sort -u -k1,1 \
    |sed 's/%//g'
 else

@@ -1,6 +1,6 @@
 {
   "name": "metriks",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A lightweight graphing framework for servers",
   "homepage": "https://github.com/kvz/metriks",
   "author": "Kevin van Zonneveld <kevin@vanzonneveld.net>",
