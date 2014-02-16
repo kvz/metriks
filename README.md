@@ -22,18 +22,25 @@
  - Trivial to add graphs. It should Just Work by default. Write a plugin file in any language. If it output a number, metriks will graph it for you. You can optionally output configuration strings like `# config.interval: 60` or `# graph.title: Load average` to finetune behavior. Newlines (`\n`) separate graph lines. Other whitespaces separate graph label from value. See the [load plugin](https://github.com/kvz/metriks/blob/master/plugins/load.sh) for an example how to plot 3 load lines: 1 minute, 5 minute, 15 minute averages. 
  - Can send out alerts when metric go outside boundaries
 
-Metriks is very basic. If you want advanced, there are plenty of options out there like graphite, mrtg or (paid) librato.
-Metriks however will never:
+Metriks is basic. If you want advanced, there are plenty of options out there like graphite, mrtg, or (paid) librato. You may also want to have a look at druid, riemann and grafana.
+However **Metriks will never**:
 
- - Require you to know perl / cgi-bin / xml / apache / etc
+ - Require you to deal with perl / cgi-bin / xml / apache / etc
+ - Impose steep learning curves
+ - Require networked components to be available to do it's job (in favor of graphing locally, optionally uploading & aggregating)
  - Get in your way
- - Ask you for money
+ - Ask for money
 
 ## Todo
+
+Metriks is still in the early stages of development, here's what needs to be done still:
 
  - [ ] More advanced rrd types (COUNTER vs GAUGE, ability to add a custom step, AREA graphs) as req in [#1](https://github.com/kvz/metriks/issues/1)
  - [ ] Offer an API that so that you can programatically add values in Nodejs programs. e.g. `require('metriks').graph('df').addSeries([{'/': '50%'}])`
  - [ ] Checkout smokeping sources and try to build a plugin very similar to it. This should expose some limitations and make it more usable in different environments after fixing those.
+ - [ ] Example plugin: network traffic
+ - [ ] Example plugin: top-10 memory heavy processes (may require "Dynamically expand ds" first)
+ - [ ] Example plugins: http://word.bitly.com/post/74839060954/ten-things-to-monitor?h=2
  - [ ] Something that can generate an index page/json of rrd/images
  - [ ] Upload to s3 as a step after rrd -> graph -> upload
  - [ ] Aggregate datasources into 1 graph using glob
@@ -66,11 +73,11 @@ Metriks however will never:
 
 ## Prerequisites
 
-I'm assuming you already have node/npm and git installed.
+I'm assuming you already have [node 0.8+](http://nodejs.org/download/) and [Git](http://git-scm.com/downloads) available.
 
 ### OSX
 
-To run rrdtool on OSX you'll need [XQuartz](http://xquartz.macosforge.org). Then via brew:
+To run rrdtool on OSX you'll need [XQuartz](http://xquartz.macosforge.org). Then via [Homebrew](http://brew.sh/):
 
 ```bash
 brew install rrdtool coreutils
