@@ -23,7 +23,9 @@
 
 ## Todo
 
- - [ ] Checkout smokeping sources and try to build a plugin very similar to it
+ - [ ] More advanced graphs (COUNTER vs GAUGE, ability to add a custom step, AREA graphs) as req in #1
+ - [ ] Offer an API that so that you can programatically add values in Nodejs programs. e.g. `require('metriks').graph('df').addSeries([{'/': '50%'}])`
+ - [ ] Checkout smokeping sources and try to build a plugin very similar to it. This should expose some limitations and make it more usable in different environments after fixing those.
  - [ ] Something that can generate an index page/json of rrd/images
  - [ ] Upload to s3 as a step after rrd -> graph -> upload
  - [ ] Aggregate datasources into 1 graph using glob
