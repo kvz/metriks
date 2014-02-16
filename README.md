@@ -18,19 +18,22 @@
  - Builds on `nodejs` for optimal concurrency and the ability to run a server without dealing with cgi-bin, etc.
  - Minimal dependencies. If you have node.js/npm working, all you need is `aptitude install rrdtool` and you're ready to go
  - Writes RRDs & images to disk, so it works when everything else is down.
+ - Idempotent. Metriks will create graphs that don't exist, and generally be eager to get you results.
  - Trivial to add graphs. It should Just Work by default. Write a plugin file in any language. If it output a number, metriks will graph it for you. You can optionally output configuration strings like `# config.interval: 60` or `# graph.title: Load average` to finetune behavior. Newlines (`\n`) separate graph lines. Other whitespaces separate graph label from value. See the [load plugin](https://github.com/kvz/metriks/blob/master/plugins/load.sh) for an example how to plot 3 load lines: 1 minute, 5 minute, 15 minute averages. 
  - Can send out alerts when metric go outside boundaries
 
-Metriks is very basic. If you want advanced, there are plenty of options out there like graphite, mrtg.
+Metriks is very basic. If you want advanced, there are plenty of options out there like graphite, mrtg or (paid) librato.
 Metriks however will never:
 
  - Require you to know perl / cgi-bin / xml / apache / etc
  - Get in your way
+ - Ask you for money
 
 ## Todo
 
  - [ ] More advanced rrd types (COUNTER vs GAUGE, ability to add a custom step, AREA graphs) as req in [#1](https://github.com/kvz/metriks/issues/1)
  - [ ] Offer an API that so that you can programatically add values in Nodejs programs. e.g. `require('metriks').graph('df').addSeries([{'/': '50%'}])`
+ - [ ] Offer an optional webserver via e.g. [send](https://github.com/visionmedia/send) so you can browse through the generated pngs
  - [ ] Checkout smokeping sources and try to build a plugin very similar to it. This should expose some limitations and make it more usable in different environments after fixing those.
  - [ ] Something that can generate an index page/json of rrd/images
  - [ ] Upload to s3 as a step after rrd -> graph -> upload
