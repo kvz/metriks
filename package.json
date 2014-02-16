@@ -16,7 +16,8 @@
     "mocha": "1.17.0",
     "cli": "0.4.5",
     "lru-cache": "2.5.0",
-    "sigmund": "1.0.0"
+    "sigmund": "1.0.0",
+    "connect": "2.13.0"
   },
   "devDependencies": {},
   "keywords": [
