@@ -83,7 +83,7 @@ npm install
 ## Run
 
 ```bash
-./bin/metriks
+./bin/metriks --debug
 ```
 
 ## Test
