@@ -40,6 +40,8 @@ Metriks however will never:
  - [ ] Support for max & min values and a way to communicate problems to the outside world
  - [ ] Dynamically expand ds using rrdtool dump / import. It's hard, see http://stackoverflow.com/questions/13476226/adding-new-datasource-to-an-existing-rrd
  - [ ] More unit test coverage
+ - [ ] Don't crash the main process on plugin fatals.
+ - [ ] Show min, max, avg for every ds on every graph by default
  - [ ] Add example section to readme with screenshots and plugin code
  - [x] Offer an optional webserver via e.g. [send](https://github.com/visionmedia/send) so you can browse through the generated pngs
  - [x] _.findWhere
