@@ -18,6 +18,7 @@
  - Builds on `nodejs` for optimal concurrency and the ability to run a server without dealing with cgi-bin, etc.
  - Minimal dependencies. If you have node.js/npm working, all you need is `aptitude install rrdtool` and you're ready to go
  - Writes RRDs & images to disk, so it works when everything else is down.
+ - Idempotent. Metriks will create graphs that don't exist, and generally be eager to get you results.
  - Trivial to add graphs. It should Just Work by default. Write a plugin file in any language. If it output a number, metriks will graph it for you. You can optionally output configuration strings like `# config.interval: 60` or `# graph.title: Load average` to finetune behavior. Newlines (`\n`) separate graph lines. Other whitespaces separate graph label from value. See the [load plugin](https://github.com/kvz/metriks/blob/master/plugins/load.sh) for an example how to plot 3 load lines: 1 minute, 5 minute, 15 minute averages. 
  - Can send out alerts when metric go outside boundaries
 
