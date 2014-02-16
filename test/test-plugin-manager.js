@@ -12,22 +12,22 @@ var pluginManager = new PluginManager({
   }
 });
 
-var rrdFile = __dirname + '/rrd/one/' + os.hostname() + '-one.rrd';
+var rrdFile = __dirname + '/rrd/count/' + os.hostname() + '-count.rrd';
 
 
 describe('pluginManager', function(){
   describe('find', function(){
-    it('should find the "one" plugin by name', function(done){
-      pluginManager.find('one', function (err, plugin){
+    it('should find the "count" plugin by name', function(done){
+      pluginManager.find('count', function (err, plugin){
         assert.strictEqual(err, null);
-        assert.strictEqual(plugin.name, 'one');
+        assert.strictEqual(plugin.name, 'count');
         done();
       });
     });
-    it('should find the "one" plugin by filepath', function(done){
+    it('should find the "count" plugin by filepath', function(done){
       pluginManager.find(rrdFile, function (err, plugin){
         assert.strictEqual(err, null);
-        assert.strictEqual(plugin.name, 'one');
+        assert.strictEqual(plugin.name, 'count');
         done();
       });
     });
