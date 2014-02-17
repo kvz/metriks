@@ -50,7 +50,8 @@ Metriks is still in early stages of development, here's what needs to be done st
  - [ ] Don't crash the main process on plugin fatals.
  - [ ] Show min, max, avg for every ds on every graph by default
  - [ ] Add example section to readme with screenshots and plugin code
- - [ ] Upgrade flat once [this](https://github.com/hughsk/flat/issues/6) bug has been resolved. Until then, prefix all ds keys with a letter.
+ - [x] Configurable line titles vs hardcoded ds name
+ - [x] Upgrade flat once [this](https://github.com/hughsk/flat/issues/6) bug has been resolved. Until then, prefix all ds keys with a letter.
  - [x] Offer an optional webserver via e.g. [send](https://github.com/visionmedia/send) so you can browse through the generated pngs
  - [x] _.findWhere
  - [x] Refactoring: Plugin
