@@ -1,4 +1,4 @@
-echo "# config.interval: 1"
+echo "# config.interval: 60"
 echo "# graph.title: Uptime"
 echo "# graph.lineColors.0: #D73A3FFF"
 echo "# graph.lineColors.1: #9AEBEAFF"

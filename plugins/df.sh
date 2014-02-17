@@ -1,4 +1,4 @@
-echo "# config.interval: 1"
+echo "# config.interval: 30"
 echo "# graph.title: Disk space"
 echo "# graph.verticalLabel: Used in %"
 

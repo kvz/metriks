@@ -7,7 +7,7 @@ else
 fi
 let "MAX=${CORES} * 3"
 echo "# graph.title: Load averages"
-echo "# config.interval: 1"
+echo "# config.interval: 60"
 echo "# config.min: 0"
 echo "# config.max: ${MAX}"
 
