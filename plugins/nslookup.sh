@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 echo "# config->interval: 60"
 echo "# graph->title: Test resolving nameservers"
 echo "# graph->verticalLabel: Response in ms"

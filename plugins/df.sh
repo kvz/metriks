@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 echo "# config->interval: 30"
 echo "# graph->title: Disk space"
 echo "# graph->verticalLabel: Used in %"

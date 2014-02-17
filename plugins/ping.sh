@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 echo "# config.interval: 60"
 echo "# graph.title: Ping resolving nameservers"
 echo "# graph.verticalLabel: Roundtrip in ms"
