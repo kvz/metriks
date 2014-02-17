@@ -31,6 +31,45 @@ However **Metriks will never**:
  - Get in your way
  - Ask for money
 
+## Example
+
+Here we'll add a simple graph with response times to different nameservers that looks like this:
+
+![kvz-imac-home-4 local-ping](https://f.cloud.github.com/assets/26752/2183582/db0b1b90-97af-11e3-919f-1102eee4f0e4.png)
+
+To achieve this, open a text file `./plugins/ping.sh`, `chmod +x` it, and make it say:
+
+```bash
+echo "# config.interval: 60"
+echo "# graph.title: Ping resolving nameservers"
+echo "# graph.verticalLabel: Roundtrip in ms"
+
+echo "ip_8.8.8.8 $(ping -c 4 8.8.8.8 | tail -1| awk '{print $4}' | cut -d '/' -f 2)"
+echo "ip_4.2.2.2 $(ping -c 4 4.2.2.2 | tail -1| awk '{print $4}' | cut -d '/' -f 2)"
+echo "ip_208.67.222.222 $(ping -c 4 208.67.222.222 | tail -1| awk '{print $4}' | cut -d '/' -f 2)"
+echo "ip_172.16.0.23 $(ping -c 4 172.16.0.23 | tail -1| awk '{print $4}' | cut -d '/' -f 2)"
+```
+
+## Options
+
+If you want to keep your plugin files outside of the Metriks source directory, simply point metriks to your own plugin dir via:
+
+```bash
+./bin/metriks --plugin-dir ~/metriks/plugins
+```
+
+By default, metriks writes rrds files to `~/metriks/rrds` and images to `~/metriks/png`. Metriks contains an simple webserver so you can browse the `png` dir via: 
+
+```bash
+./bin/metriks --web-port 8000
+```
+
+If you don't want to automatically build png files but are only interested in gathering data in rrd, use
+
+```bash
+./bin/metriks --auto-write-png false
+```
+
 ## Todo
 
 Metriks is still in early stages of development, here's what needs to be done still:
@@ -49,7 +88,8 @@ Metriks is still in early stages of development, here's what needs to be done st
  - [ ] More unit test coverage
  - [ ] Don't crash the main process on plugin fatals.
  - [ ] Show min, max, avg for every ds on every graph by default
- - [ ] Add example section to readme with screenshots and plugin code
+ - [ ] Install bin globally
+ - [x] Add example section to readme with screenshots and plugin code
  - [x] Configurable line titles vs hardcoded ds name
  - [x] Upgrade flat once [this](https://github.com/hughsk/flat/issues/6) bug has been resolved. Until then, prefix all ds keys with a letter.
  - [x] Offer an optional webserver via e.g. [send](https://github.com/visionmedia/send) so you can browse through the generated pngs
