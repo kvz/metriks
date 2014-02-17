@@ -6,7 +6,8 @@ servers="Google:8.8.8.8 Google:8.8.4.4 Level3:4.2.2.2 OpenDNS:208.67.222.222 Ama
 i=0
 for server in ${servers}; do
   title="$(echo ${server} |cut -d: -f1)"
-  echo "# graph.lineTitles.${i}: ${title}"
+  ip="$(echo ${server} |cut -d: -f2)"
+  echo "# graph.lineTitles.${i}: ${title} ${ip}"
   let "i=i+1"
 done
 
