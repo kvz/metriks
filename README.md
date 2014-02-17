@@ -35,7 +35,8 @@ However **Metriks will never**:
 
 Here we'll add a simple graph with response times to different nameservers that looks like this:
 
-![kvz-imac-home-4 local-ping](https://f.cloud.github.com/assets/26752/2183582/db0b1b90-97af-11e3-919f-1102eee4f0e4.png)
+![kvz-imac-home-4 local-ping](![kvz-imac-home-4 local-nslookup](https://f.cloud.github.com/assets/26752/2184123/1cc41564-97ba-11e3-863b-5b9c87f671f8.png)
+)
 
 To achieve this, open a text file `./plugins/ping.sh`, `chmod +x` it, and make it say:
 

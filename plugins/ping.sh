@@ -3,15 +3,31 @@ echo "# graph.title: Ping resolving nameservers"
 echo "# graph.verticalLabel: Roundtrip in ms"
 echo "# graph.lineColors.0: #D73A3FFF"
 
+servers="Google:8.8.8.8 Level3:4.2.2.2 OpenDNS:208.67.222.222 AmazonEC2:172.16.0.23"
+
+i=0
+for server in ${servers}; do
+  title="$(echo ${server} |cut -d: -f1)"
+  ip="$(echo ${server} |cut -d: -f2)"
+  echo "# graph.lineTitles.${i}: ${title} ${ip}"
+  let "i=i+1"
+done
+
 if [ "${1}" = "config" ]; then
-  # Don't ping hosts when we're just loading the plugins
+  # Don't check hosts when we're just loading the plugins
   exit 0
 fi
 
-echo "ip_8.8.8.8 $(ping -c 4 8.8.8.8 | tail -1| awk '{print $4}' | cut -d '/' -f 2)"
-echo "ip_4.2.2.2 $(ping -c 4 4.2.2.2 | tail -1| awk '{print $4}' | cut -d '/' -f 2)"
-echo "ip_208.67.222.222 $(ping -c 4 208.67.222.222 | tail -1| awk '{print $4}' | cut -d '/' -f 2)"
-echo "ip_172.16.0.23 $(ping -c 4 172.16.0.23 | tail -1| awk '{print $4}' | cut -d '/' -f 2)"
+i=0
+for server in $(echo ${servers}); do
+  ip="$(echo ${server} |cut -d: -f2)"
+  result=$(ping -c 4 ${ip} | tail -1| awk '{print $4}' | cut -d '/' -f 2)
+  if [ $? -ne 0 ] || [ -z "${result}" ]; then
+    result=-1
+  fi
+  echo "ip_${ip} ${result}"
+  let "i=i+1"
+done
 
 # Don't let any error during ping crash the plugin:
 exit 0
