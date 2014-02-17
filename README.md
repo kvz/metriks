@@ -44,10 +44,9 @@ echo "# config.interval: 60"
 echo "# graph.title: Ping resolving nameservers"
 echo "# graph.verticalLabel: Roundtrip in ms"
 
-echo "ip_8.8.8.8 $(ping -c 4 8.8.8.8 | tail -1| awk '{print $4}' | cut -d '/' -f 2)"
-echo "ip_4.2.2.2 $(ping -c 4 4.2.2.2 | tail -1| awk '{print $4}' | cut -d '/' -f 2)"
-echo "ip_208.67.222.222 $(ping -c 4 208.67.222.222 | tail -1| awk '{print $4}' | cut -d '/' -f 2)"
-echo "ip_172.16.0.23 $(ping -c 4 172.16.0.23 | tail -1| awk '{print $4}' | cut -d '/' -f 2)"
+for server in 8.8.8.8 4.2.2.2 208.67.222.222 172.16.0.23; do
+  echo "ip_${server} $(ping -c 4 ${server} |tail -1 |awk '{print $4}' |cut -d '/' -f 2)"
+done
 ```
 
 ## Options
@@ -55,19 +54,26 @@ echo "ip_172.16.0.23 $(ping -c 4 172.16.0.23 | tail -1| awk '{print $4}' | cut -
 If you want to keep your plugin files outside of the Metriks source directory, simply point metriks to your own plugin dir via:
 
 ```bash
-./bin/metriks --plugin-dir ~/metriks/plugins
+metriks --plugin-dir ~/metriks/plugins
 ```
 
-By default, metriks writes rrds files to `~/metriks/rrds` and images to `~/metriks/png`. Metriks contains an simple webserver so you can browse the `png` dir via: 
+By default, metriks writes rrds files to `~/metriks/rrd` and images to `~/metriks/png`. But you can change that with
 
 ```bash
-./bin/metriks --web-port 8000
+metriks --rrd-dir /var/lib/rrd
+metriks --png-dir /var/www/graphs
+```
+
+Metriks contains an simple webserver so you can browse the `png` dir via: 
+
+```bash
+metriks --web-port 8000
 ```
 
 If you don't want to automatically build png files but are only interested in gathering data in rrd, use
 
 ```bash
-./bin/metriks --auto-write-png false
+metriks --auto-write-png false
 ```
 
 ## Todo
@@ -88,7 +94,7 @@ Metriks is still in early stages of development, here's what needs to be done st
  - [ ] More unit test coverage
  - [ ] Don't crash the main process on plugin fatals.
  - [ ] Show min, max, avg for every ds on every graph by default
- - [ ] Install bin globally
+ - [x] Install bin globally
  - [x] Add example section to readme with screenshots and plugin code
  - [x] Configurable line titles vs hardcoded ds name
  - [x] Upgrade flat once [this](https://github.com/hughsk/flat/issues/6) bug has been resolved. Until then, prefix all ds keys with a letter.
@@ -134,6 +140,15 @@ aptitude install rrdtool
 ```
 
 ## Install
+
+
+### Globally
+
+```bash
+npm install -g metriks
+```
+
+### Development
 
 ```bash
 git clone https://github.com/kvz/metriks.git

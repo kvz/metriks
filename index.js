@@ -9,7 +9,7 @@ cli.parse({
   "auto-write-png": [false, 'Automatically write png files to png-dir', 'boolean', true],
   "name":           [false, 'Name of plugin or rrd file]', 'string' ],
   "plugin-dir":     [false, 'Plugin directory. Overrules workDir. ', 'path', __dirname + '/plugins' ],
-  "rrd-dir":        [false, 'RRD directory. Overrules workDir. ', 'path', workDir + '/rrds' ],
+  "rrd-dir":        [false, 'RRD directory. Overrules workDir. ', 'path', workDir + '/rrd' ],
   "png-dir":        [false, 'Image / HTML directory. Overrules workDir. ', 'path', workDir + '/png' ]
 });
 
