@@ -1,0 +1,382 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Metriks by kvz</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/kvz/metriks">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/kvz/metriks/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/kvz/metriks/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Metriks</h1>
+          <p>A simpler graphing framework</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/kvz">kvz</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>
+<a name="metriks" class="anchor" href="#metriks"><span class="octicon octicon-link"></span></a>Metriks</h1>
+
+
+
+<p><a href="http://travis-ci.org/kvz/metriks" title="Check this project's build status on TravisCI"><img src="https://secure.travis-ci.org/kvz/metriks.png?branch=master" alt="Build Status"></a>
+<a href="https://npmjs.org/package/metriks" title="View this project on NPM"><img src="http://badge.fury.io/js/metriks.png" alt="NPM version"></a>
+<a href="https://david-dm.org/kvz/metriks"><img src="https://david-dm.org/kvz/metriks.png?theme=shields.io" alt="Dependency Status"></a>
+<a href="https://david-dm.org/kvz/metriks#info=devDependencies"><img src="https://david-dm.org/kvz/metriks/dev-status.png?theme=shields.io" alt="Development Dependency Status"></a></p>
+
+<p><a href="https://www.gittip.com/kvz/" title="Sponsor the development of metriks via Gittip"><img src="http://img.shields.io/gittip/kvz.png" alt="Gittip donate button"></a>
+<a href="https://flattr.com/submit/auto?user_id=kvz&amp;url=https://github.com/kvz/metriks&amp;title=metriks&amp;language=&amp;tags=github&amp;category=software" title="Sponsor the development of metriks via Flattr"><img src="http://img.shields.io/flattr/donate.png?color=yellow" alt="Flattr donate button"></a>
+<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=kevin%40vanzonneveld%2enet&amp;lc=NL&amp;item_name=Open%20source%20donation%20to%20Kevin%20van%20Zonneveld&amp;currency_code=USD&amp;bn=PP-DonationsBF%3abtn_donate_SM%2egif%3aNonHosted" title="Sponsor the development of metriks via Paypal"><img src="http://img.shields.io/paypal/donate.png?color=yellow" alt="PayPayl donate button"></a>
+<a href="https://coinbase.com/checkouts/19BtCjLCboRgTAXiaEvnvkdoRyjd843Dg2" title="Sponsor the development of metriks via BitCoin"><img src="http://img.shields.io/bitcoin/donate.png?color=yellow" alt="BitCoin donate button"></a></p>
+
+
+
+<h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li>Builds on <code>rrdtool</code>. The network industry standard of saving time-series data to disk with a constant storage footprint.</li>
+<li>Builds on <code>nodejs</code> for optimal concurrency and the ability to run a server without dealing with cgi-bin, etc.</li>
+<li>Minimal dependencies. If you have node.js/npm working, all you need is <code>aptitude install rrdtool</code> and you're ready to go</li>
+<li>Writes RRDs &amp; images to disk, so it works when everything else is down.</li>
+<li>Idempotent. Metriks will create graphs that don't exist, and generally be eager to get you results.</li>
+<li>Trivial to add graphs. It should Just Work by default. Write a plugin file in any language. If it outputs a single number, metriks will graph it for you. You can optionally output configuration strings like <code># config.interval: 60</code> or <code># graph.title: Load average</code> to finetune behavior. Newlines (<code>\n</code>) separate graph lines. Other whitespaces separate graph label from value. See the <a href="https://github.com/kvz/metriks/blob/master/plugins/load.sh">load plugin</a> for an example how to plot 3 load lines: 1 minute, 5 minute, 15 minute averages. </li>
+<li>Can send out alerts when metrics go outside boundaries</li>
+</ul><p>Metriks is basic. If you want advanced, there are plenty of options out there like graphite, mrtg, or (paid) librato. You may also want to have a look at druid, riemann and grafana.
+However <strong>Metriks will never</strong>:</p>
+
+<ul>
+<li>Require you to deal with perl / cgi-bin / xml / apache / etc</li>
+<li>Impose steep learning curves</li>
+<li>Require networked components to be available to do it's job (in favor of graphing locally, optionally aggregating &amp; uploading to e.g. S3)</li>
+<li>Get in your way</li>
+<li>Ask for money</li>
+</ul><h2>
+<a name="example" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Example</h2>
+
+<p>Here we'll add a simple graph with response times to different nameservers that looks like this:</p>
+
+<p><img src="https://f.cloud.github.com/assets/26752/2184319/a854bf90-97bd-11e3-9d78-8ba0b7178952.png" alt="kvz-imac-home-4 local-ping 1"></p>
+
+<p>To achieve this, open a text file <code>./plugins/ping.sh</code>, <code>chmod +x</code> it, and make it say:</p>
+
+<div class="highlight highlight-bash"><pre><span class="nb">echo</span> <span class="s2">"# config.interval: 60"</span>
+<span class="nb">echo</span> <span class="s2">"# graph.title: Ping resolving nameservers"</span>
+<span class="nb">echo</span> <span class="s2">"# graph.verticalLabel: Roundtrip in ms"</span>
+
+<span class="k">for </span>server in 8.8.8.8 4.2.2.2 208.67.222.222 172.16.0.23<span class="p">;</span> <span class="k">do</span>
+<span class="k">  </span><span class="nb">echo</span> <span class="s2">"ip_${server} $(ping -c 4 ${server} |tail -1 |awk '{print $4}' |cut -d '/' -f 2)"</span>
+<span class="k">done</span>
+</pre></div>
+
+<h2>
+<a name="options" class="anchor" href="#options"><span class="octicon octicon-link"></span></a>Options</h2>
+
+<p>If you want to keep your plugin files outside of the Metriks source directory, simply point metriks to your own plugin dir via:</p>
+
+<div class="highlight highlight-bash"><pre>metriks --plugin-dir ~/metriks/plugins
+</pre></div>
+
+<p>By default, metriks writes rrds files to <code>~/metriks/rrd</code> and images to <code>~/metriks/png</code>. But you can change that with</p>
+
+<div class="highlight highlight-bash"><pre>metriks --rrd-dir /var/lib/rrd
+metriks --png-dir /var/www/graphs
+</pre></div>
+
+<p>Metriks contains an simple webserver so you can browse the <code>png</code> dir via: </p>
+
+<div class="highlight highlight-bash"><pre>metriks --web-port 8000
+</pre></div>
+
+<p>If you don't want to automatically build png files but are only interested in gathering data in rrd, use</p>
+
+<div class="highlight highlight-bash"><pre>metriks --auto-write-png <span class="nb">false</span>
+</pre></div>
+
+<h2>
+<a name="todo" class="anchor" href="#todo"><span class="octicon octicon-link"></span></a>Todo</h2>
+
+<p>Metriks is still in early stages of development, here's what needs to be done still:</p>
+
+<ul>
+<li>[ ] More advanced rrd types (COUNTER vs GAUGE, ability to add a custom step, AREA graphs) as req in <a href="https://github.com/kvz/metriks/issues/1">#1</a>
+</li>
+<li>[ ] Offer an API that so that you can programatically add values in Nodejs programs. e.g. <code>require('metriks').graph('df').addSeries([{'/': '50%'}])</code>
+</li>
+<li>[ ] Checkout smokeping sources and try to build a plugin very similar to it. This should expose some limitations and make it more usable in different environments after fixing those.</li>
+<li>[ ] Example plugin: network traffic</li>
+<li>[ ] Example plugin: top-10 memory heavy processes (may require "Dynamically expand ds" first)</li>
+<li>[ ] Example plugins: <a href="http://word.bitly.com/post/74839060954/ten-things-to-monitor?h=2">http://word.bitly.com/post/74839060954/ten-things-to-monitor?h=2</a>
+</li>
+<li>[ ] Something that can generate an index page/json of rrd/images</li>
+<li>[ ] Upload to s3 as a step after rrd -&gt; graph -&gt; upload</li>
+<li>[ ] Aggregate datasources into 1 graph using glob</li>
+<li>[ ] Support for max &amp; min values and a way to communicate problems to the outside world</li>
+<li>[ ] Dynamically expand ds using rrdtool dump / import. It's hard, see <a href="http://stackoverflow.com/questions/13476226/adding-new-datasource-to-an-existing-rrd">http://stackoverflow.com/questions/13476226/adding-new-datasource-to-an-existing-rrd</a>
+</li>
+<li>[ ] More unit test coverage</li>
+<li>[ ] Don't crash the main process on plugin fatals.</li>
+<li>[ ] Show min, max, avg for every ds on every graph by default</li>
+<li>[ ] Should we ship an <code>upstart</code> file so people can daemonize/respawn/log metriks easily on ubuntu?</li>
+<li>[x] Install bin globally</li>
+<li>[x] Add example section to readme with screenshots and plugin code</li>
+<li>[x] Configurable line titles vs hardcoded ds name</li>
+<li>[x] Upgrade flat once <a href="https://github.com/hughsk/flat/issues/6">this</a> bug has been resolved. Until then, prefix all ds keys with a letter.</li>
+<li>[x] Offer an optional webserver via e.g. <a href="https://github.com/visionmedia/send">send</a> so you can browse through the generated pngs</li>
+<li>[x] _.findWhere</li>
+<li>[x] Refactoring: Plugin</li>
+<li>[x] Refactoring: pluginmanager</li>
+<li>[x] Refactoring: rrdtool</li>
+<li>[x] Refactoring: cli</li>
+<li>[x] Retire thong.tmpl for _.template</li>
+<li>[x] Retire thong.sprintf for util.format</li>
+<li>[x] Retire commander for cli</li>
+<li>[x] Visually show integration test</li>
+<li>[x] One integration test</li>
+<li>[x] Test cases</li>
+<li>[x] Explodetree/flatten, use it for plug-in config (linecolour slice to array) and rrdtool info</li>
+<li>[x] _.isNumeric</li>
+<li>[x] Librato colors</li>
+<li>[x] Graph options need to be interpretted</li>
+<li>[x] Configurable y-axis</li>
+<li>[x] Lose rrd.js over rrdtool.js</li>
+<li>[x] Async.parallel jobs</li>
+<li>[x] Support for .go plugins</li>
+</ul><h2>
+<a name="prerequisites" class="anchor" href="#prerequisites"><span class="octicon octicon-link"></span></a>Prerequisites</h2>
+
+<p>I'm assuming you already have <a href="http://nodejs.org/download/">node 0.8+</a> and <a href="http://git-scm.com/downloads">Git</a> available.</p>
+
+<h3>
+<a name="osx" class="anchor" href="#osx"><span class="octicon octicon-link"></span></a>OSX</h3>
+
+<p>To run rrdtool on OSX you'll need <a href="http://xquartz.macosforge.org">XQuartz</a>. Then via <a href="http://brew.sh/">Homebrew</a>:</p>
+
+<div class="highlight highlight-bash"><pre>brew install rrdtool coreutils
+</pre></div>
+
+<p>coreutils is required for <code>timeout</code>, used in integration tests.</p>
+
+<h3>
+<a name="ubuntu" class="anchor" href="#ubuntu"><span class="octicon octicon-link"></span></a>Ubuntu</h3>
+
+<div class="highlight highlight-bash"><pre>aptitude install rrdtool
+</pre></div>
+
+<h2>
+<a name="install" class="anchor" href="#install"><span class="octicon octicon-link"></span></a>Install</h2>
+
+<h3>
+<a name="globally" class="anchor" href="#globally"><span class="octicon octicon-link"></span></a>Globally</h3>
+
+<div class="highlight highlight-bash"><pre>npm install -g metriks
+</pre></div>
+
+<h3>
+<a name="development" class="anchor" href="#development"><span class="octicon octicon-link"></span></a>Development</h3>
+
+<div class="highlight highlight-bash"><pre>git clone https://github.com/kvz/metriks.git
+<span class="nb">cd </span>metriks
+npm install
+</pre></div>
+
+<h2>
+<a name="run" class="anchor" href="#run"><span class="octicon octicon-link"></span></a>Run</h2>
+
+<p>With debug output, and a built-in webserver to browser resulting png graphs on port 8000</p>
+
+<div class="highlight highlight-bash"><pre>./bin/metriks --debug --web-port 8000
+</pre></div>
+
+<h2>
+<a name="test" class="anchor" href="#test"><span class="octicon octicon-link"></span></a>Test</h2>
+
+<div class="highlight highlight-bash"><pre>make <span class="nb">test</span>
+</pre></div>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p><a href="LICENSE">MIT LICENSE</a></p>
+
+<p>/usr/bin/rrdtool graph - \
+"--start" \
+"-10800" \
+"--end" \
+"now" \
+"--height" \
+"200" \
+"--width" \
+"600" \
+"--title" \
+"Latency Graph" \
+"--rigid" \
+"--lower-limit" \
+"0" \
+"--vertical-label" \
+"Seconds" \
+"--imgformat" \
+"PNG" \
+"--color" \
+"SHADEA#ffffff" \
+"--color" \
+"SHADEB#ffffff" \
+"--color" \
+"BACK#ffffff" \
+"--color" \
+"CANVAS#ffffff" \
+"DEF:ping1=/var/lib/smokeping/.rrd:ping1:AVERAGE" \
+"DEF:ping2=/var/lib/smokeping/.rrd:ping2:AVERAGE" \
+"DEF:ping3=/var/lib/smokeping/.rrd:ping3:AVERAGE" \
+"DEF:ping4=/var/lib/smokeping/.rrd:ping4:AVERAGE" \
+"DEF:ping5=/var/lib/smokeping/.rrd:ping5:AVERAGE" \
+"DEF:ping6=/var/lib/smokeping/.rrd:ping6:AVERAGE" \
+"DEF:ping7=/var/lib/smokeping/.rrd:ping7:AVERAGE" \
+"DEF:ping8=/var/lib/smokeping/.rrd:ping8:AVERAGE" \
+"DEF:ping9=/var/lib/smokeping/.rrd:ping9:AVERAGE" \
+"DEF:ping10=/var/lib/smokeping/.rrd:ping10:AVERAGE" \
+"DEF:ping11=/var/lib/smokeping/.rrd:ping11:AVERAGE" \
+"DEF:ping12=/var/lib/smokeping/.rrd:ping12:AVERAGE" \
+"DEF:ping13=/var/lib/smokeping/.rrd:ping13:AVERAGE" \
+"DEF:ping14=/var/lib/smokeping/.rrd:ping14:AVERAGE" \
+"DEF:ping15=/var/lib/smokeping/.rrd:ping15:AVERAGE" \
+"DEF:ping16=/var/lib/smokeping/.rrd:ping16:AVERAGE" \
+"DEF:ping17=/var/lib/smokeping/.rrd:ping17:AVERAGE" \
+"DEF:ping18=/var/lib/smokeping/.rrd:ping18:AVERAGE" \
+"DEF:ping19=/var/lib/smokeping/.rrd:ping19:AVERAGE" \
+"DEF:ping20=/var/lib/smokeping/.rrd:ping20:AVERAGE" \
+"CDEF:cp1=ping1,0.08767488,LT,ping1,INF,IF" \
+"CDEF:cp2=ping2,0.08767488,LT,ping2,INF,IF" \
+"CDEF:cp3=ping3,0.08767488,LT,ping3,INF,IF" \
+"CDEF:cp4=ping4,0.08767488,LT,ping4,INF,IF" \
+"CDEF:cp5=ping5,0.08767488,LT,ping5,INF,IF" \
+"CDEF:cp6=ping6,0.08767488,LT,ping6,INF,IF" \
+"CDEF:cp7=ping7,0.08767488,LT,ping7,INF,IF" \
+"CDEF:cp8=ping8,0.08767488,LT,ping8,INF,IF" \
+"CDEF:cp9=ping9,0.08767488,LT,ping9,INF,IF" \
+"CDEF:cp10=ping10,0.08767488,LT,ping10,INF,IF" \
+"CDEF:cp11=ping11,0.08767488,LT,ping11,INF,IF" \
+"CDEF:cp12=ping12,0.08767488,LT,ping12,INF,IF" \
+"CDEF:cp13=ping13,0.08767488,LT,ping13,INF,IF" \
+"CDEF:cp14=ping14,0.08767488,LT,ping14,INF,IF" \
+"CDEF:cp15=ping15,0.08767488,LT,ping15,INF,IF" \
+"CDEF:cp16=ping16,0.08767488,LT,ping16,INF,IF" \
+"CDEF:cp17=ping17,0.08767488,LT,ping17,INF,IF" \
+"CDEF:cp18=ping18,0.08767488,LT,ping18,INF,IF" \
+"CDEF:cp19=ping19,0.08767488,LT,ping19,INF,IF" \
+"CDEF:cp20=ping20,0.08767488,LT,ping20,INF,IF" \
+"DEF:loss=/var/lib/smokeping/.rrd:loss:AVERAGE" \
+"CDEF:smoke1=cp1,UN,UNKN,cp20,cp1,-,IF" \
+"AREA:cp1" \
+"STACK:smoke1#dddddd" \
+"CDEF:smoke2=cp2,UN,UNKN,cp19,cp2,-,IF" \
+"AREA:cp2" \
+"STACK:smoke2#cacaca" \
+"CDEF:smoke3=cp3,UN,UNKN,cp18,cp3,-,IF" \
+"AREA:cp3" \
+"STACK:smoke3#b7b7b7" \
+"CDEF:smoke4=cp4,UN,UNKN,cp17,cp4,-,IF" \
+"AREA:cp4" \
+"STACK:smoke4#a4a4a4" \
+"CDEF:smoke5=cp5,UN,UNKN,cp16,cp5,-,IF" \
+"AREA:cp5" \
+"STACK:smoke5#919191" \
+"CDEF:smoke6=cp6,UN,UNKN,cp15,cp6,-,IF" \
+"AREA:cp6" \
+"STACK:smoke6#7e7e7e" \
+"CDEF:smoke7=cp7,UN,UNKN,cp14,cp7,-,IF" \
+"AREA:cp7" \
+"STACK:smoke7#6b6b6b" \
+"CDEF:smoke8=cp8,UN,UNKN,cp13,cp8,-,IF" \
+"AREA:cp8" \
+"STACK:smoke8#585858" \
+"CDEF:smoke9=cp9,UN,UNKN,cp12,cp9,-,IF" \
+"AREA:cp9" \
+"STACK:smoke9#454545" \
+"CDEF:smoke10=cp10,UN,UNKN,cp11,cp10,-,IF" \
+"AREA:cp10" \
+"STACK:smoke10#323232" \
+"DEF:median=/var/lib/smokeping/.rrd:median:AVERAGE" \
+"CDEF:ploss=loss,20,/,100,<em>" \
+"VDEF:avmed=median,AVERAGE" \
+"CDEF:mesd=median,POP,avmed,0.00692652790837922,/" \
+"GPRINT:avmed:median rtt: %.1lf %ss avg" \
+"GPRINT:median:MAX:%.1lf %ss max" \
+"GPRINT:median:MIN:%.1lf %ss min" \
+"GPRINT:median:LAST:%.1lf %ss now" \
+"COMMENT:6.9 ms sd" \
+"GPRINT:mesd:AVERAGE:%.1lf %s am/s\l" \
+"LINE1:median#202020" \
+"GPRINT:ploss:AVERAGE:packet loss: %.2lf %% avg" \
+"GPRINT:ploss:MAX:%.2lf %% max" \
+"GPRINT:ploss:MIN:%.2lf %% min" \
+"GPRINT:ploss:LAST:%.2lf %% now\l" \
+"COMMENT:loss color:" \
+"CDEF:me0=loss,-1,GT,loss,0,LE,</em>,1,UNKN,IF,median,<em>" \
+"CDEF:meL0=me0,0.0004383744,-" \
+"CDEF:meH0=me0,0,</em>,0.0004383744,2,<em>,+" \
+"AREA:meL0" \
+"STACK:meH0#26ff00:0" \
+"CDEF:me1=loss,0,GT,loss,1,LE,</em>,1,UNKN,IF,median,<em>" \
+"CDEF:meL1=me1,0.0004383744,-" \
+"CDEF:meH1=me1,0,</em>,0.0004383744,2,<em>,+" \
+"AREA:meL1" \
+"STACK:meH1#00b8ff:1/20" \
+"CDEF:me2=loss,1,GT,loss,2,LE,</em>,1,UNKN,IF,median,<em>" \
+"CDEF:meL2=me2,0.0004383744,-" \
+"CDEF:meH2=me2,0,</em>,0.0004383744,2,<em>,+" \
+"AREA:meL2" \
+"STACK:meH2#0059ff:2/20" \
+"CDEF:me3=loss,2,GT,loss,3,LE,</em>,1,UNKN,IF,median,<em>" \
+"CDEF:meL3=me3,0.0004383744,-" \
+"CDEF:meH3=me3,0,</em>,0.0004383744,2,<em>,+" \
+"AREA:meL3" \
+"STACK:meH3#5e00ff:3/20" \
+"CDEF:me4=loss,3,GT,loss,4,LE,</em>,1,UNKN,IF,median,<em>" \
+"CDEF:meL4=me4,0.0004383744,-" \
+"CDEF:meH4=me4,0,</em>,0.0004383744,2,<em>,+" \
+"AREA:meL4" \
+"STACK:meH4#7e00ff:4/20" \
+"CDEF:me10=loss,4,GT,loss,10,LE,</em>,1,UNKN,IF,median,<em>" \
+"CDEF:meL10=me10,0.0004383744,-" \
+"CDEF:meH10=me10,0,</em>,0.0004383744,2,<em>,+" \
+"AREA:meL10" \
+"STACK:meH10#dd00ff:10/20" \
+"CDEF:me19=loss,10,GT,loss,19,LE,</em>,1,UNKN,IF,median,<em>" \
+"CDEF:meL19=me19,0.0004383744,-" \
+"CDEF:meH19=me19,0,</em>,0.0004383744,2,*,+" \
+"AREA:meL19" \
+"STACK:meH19#ff0000:19/20" \
+"COMMENT: \l" \
+"HRULE:0#000000"<br>1</p>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
