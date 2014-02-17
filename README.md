@@ -83,7 +83,6 @@ Metriks is still in early stages of development, here's what needs to be done st
  - [ ] More advanced rrd types (COUNTER vs GAUGE, ability to add a custom step, AREA graphs) as req in [#1](https://github.com/kvz/metriks/issues/1)
  - [ ] Offer an API that so that you can programatically add values in Nodejs programs. e.g. `require('metriks').graph('df').addSeries([{'/': '50%'}])`
  - [ ] Checkout smokeping sources and try to build a plugin very similar to it. This should expose some limitations and make it more usable in different environments after fixing those.
- - [ ] Example plugin: network traffic
  - [ ] Example plugin: top-10 memory heavy processes (may require "Dynamically expand ds" first)
  - [ ] Example plugins: http://word.bitly.com/post/74839060954/ten-things-to-monitor?h=2
  - [ ] Generate an index page/json of rrd/images. Maybe we can leverage existing `connect` webserver to write html to disk
@@ -95,6 +94,7 @@ Metriks is still in early stages of development, here's what needs to be done st
  - [ ] Don't crash the main process on plugin fatals.
  - [ ] Show min, max, avg for every ds on every graph by default
  - [ ] Should we ship an `upstart` file so people can daemonize/respawn/log metriks easily on ubuntu?
+ - [x] Example plugin: network traffic
  - [x] Switch to `->` as a nesting delimiter. People will want to use `.` for IPs and such
  - [x] One theme object to determine colorscheme
  - [x] config nested per line. so `line.0.color` vs `lineColors.0`
