@@ -1,6 +1,6 @@
 {
   "name": "metriks",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "A lightweight graphing framework for servers",
   "homepage": "https://github.com/kvz/metriks",
   "author": "Kevin van Zonneveld <kevin@vanzonneveld.net>",
@@ -30,6 +30,7 @@
     "lightweight",
     "rrdtool"
   ],
+  "preferGlobal": true,
   "bin": { 
     "metriks": "./bin/metriks" 
   },
