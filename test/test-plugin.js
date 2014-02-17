@@ -3,7 +3,7 @@ var cli    = require('cli');
 var os     = require('os');
 var Plugin = require('../lib/plugin').Plugin;
 var plugin = new Plugin({
-  pluginFile  : __dirname + '/plugins/one.sh',
+  pluginFile  : __dirname + '/plugins/count.sh',
   rrdDir      : __dirname + '/rrd',
   pngDir      : __dirname + '/png',
   autoWritePng: true,
@@ -19,7 +19,7 @@ describe('plugin', function(){
     it('single value should return plugin name as key', function(done){
       plugin.reload(function (err) {
         plugin.parseSeries('1', '', function (err, series) {
-          assert.deepEqual(series, [{"value":1,"key":"one"}]);
+          assert.deepEqual(series, [{"value":1,"key":"count"}]);
           done();
         });
       });
@@ -29,19 +29,20 @@ describe('plugin', function(){
 
 describe('plugin', function(){
   describe('reload', function(){
-    it('should set all plugin properties', function(done){
+    it('should set all plugin properties for count.sh', function(done){
       plugin.reload(function (err) {
         assert.strictEqual(err, null);
-        assert.strictEqual(plugin.name, 'one');
+        assert.strictEqual(plugin.name, 'count');
         assert.strictEqual(plugin.timeout, 50);
         assert.strictEqual(plugin.autoWritePng, true);
         assert.strictEqual(plugin.enabled, true);
         assert.strictEqual(plugin.executable, true);
+
         assert.deepEqual(plugin.graph, {
           start: 'end-5s',
           step: '1',
           lineColors: [
-            '#44B824FF',
+            '#FFFFFFFF',
             '#E992ECFF',
             '#FF0051FF',
             '#9AEBEAFF',

@@ -23,13 +23,14 @@ if [ "${?}" -ne 124 ]; then
 fi
 
 echo "--> Writing rrdtool info file.."
-rrdtool info /tmp/metriks/rrd/one/$(hostname)-one.rrd |tee /tmp/metriks/info.txt > /dev/null
+rrdtool info /tmp/metriks/rrd/count/$(hostname)-count.rrd |tee /tmp/metriks/info.txt > /dev/null
 
 echo "--> Checking if rrdtool info file has the correct ds.."
-grep 'ds\[one\].last_ds = "1"' /tmp/metriks/info.txt || exit 1
+grep 'ds\[1\].last_ds = "1"' /tmp/metriks/info.txt || exit 1
+grep 'ds\[2\].last_ds = "2"' /tmp/metriks/info.txt || exit 1
 
 if which open >/dev/null 2>&1; then
-  open /tmp/metriks/png/one/$(hostname)-one.png
+  open /tmp/metriks/png/count/$(hostname)-count.png
 fi
 
 echo "--> Done. Integration test passed. "
