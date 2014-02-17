@@ -94,6 +94,7 @@ Metriks is still in early stages of development, here's what needs to be done st
  - [ ] More unit test coverage
  - [ ] Don't crash the main process on plugin fatals.
  - [ ] Show min, max, avg for every ds on every graph by default
+ - [ ] Should we ship an `upstart` file so people can daemonize/respawn/log metriks easily on ubuntu?
  - [x] Install bin globally
  - [x] Add example section to readme with screenshots and plugin code
  - [x] Configurable line titles vs hardcoded ds name
