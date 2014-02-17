@@ -1,6 +1,6 @@
-echo "# config.interval: 30"
-echo "# graph.title: Disk space"
-echo "# graph.verticalLabel: Used in %"
+echo "# config->interval: 30"
+echo "# graph->title: Disk space"
+echo "# graph->verticalLabel: Used in %"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   # OSX has limited df

@@ -6,10 +6,10 @@ else
   CORES=$(egrep ^processor /proc/cpuinfo |wc -l)
 fi
 let "MAX=${CORES} * 3"
-echo "# graph.title: Load averages"
-echo "# config.interval: 60"
-echo "# config.min: 0"
-echo "# config.max: ${MAX}"
+echo "# graph->title: Load averages"
+echo "# config->interval: 60"
+echo "# config->min: 0"
+echo "# config->max: ${MAX}"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   # OSX has no /proc

@@ -1,7 +1,7 @@
 echo "# config.interval: 60"
 echo "# graph.title: Ping resolving nameservers"
 echo "# graph.verticalLabel: Roundtrip in ms"
-echo "# graph.lineColors.0: #D73A3FFF"
+echo "# graph.lines.ip_8.8.8.8.color: #D73A3FFF"
 
 servers="Google:8.8.8.8 Level3:4.2.2.2 OpenDNS:208.67.222.222 AmazonEC2:172.16.0.23"
 
@@ -9,7 +9,7 @@ i=0
 for server in ${servers}; do
   title="$(echo ${server} |cut -d: -f1)"
   ip="$(echo ${server} |cut -d: -f2)"
-  echo "# graph.lineTitles.${i}: ${title} ${ip}"
+  echo "# graph->lines->ip_${ip}->title: ${title} ${ip}"
   let "i=i+1"
 done
 
