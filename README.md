@@ -86,7 +86,7 @@ Metriks is still in early stages of development, here's what needs to be done st
  - [ ] Example plugin: network traffic
  - [ ] Example plugin: top-10 memory heavy processes (may require "Dynamically expand ds" first)
  - [ ] Example plugins: http://word.bitly.com/post/74839060954/ten-things-to-monitor?h=2
- - [ ] Something that can generate an index page/json of rrd/images
+ - [ ] Generate an index page/json of rrd/images. Maybe we can leverage existing `connect` webserver to write html to disk
  - [ ] Upload to s3 as a step after rrd -> graph -> upload
  - [ ] Aggregate datasources into 1 graph using glob
  - [ ] Support for max & min values and a way to communicate problems to the outside world

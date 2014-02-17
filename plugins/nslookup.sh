@@ -8,6 +8,8 @@ for server in ${servers}; do
   title="$(echo ${server} |cut -d: -f1)"
   ip="$(echo ${server} |cut -d: -f2)"
   echo "# graph->lines->ip_${ip}->title: ${title} ${ip}"
+  echo "# graph->lines->ip_${ip}->element: AREA"
+  echo "# graph->lines->ip_${ip}->consolidation: AVERAGE"
   let "i=i+1"
 done
 
