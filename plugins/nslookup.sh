@@ -7,9 +7,9 @@ i=0
 for server in ${servers}; do
   title="$(echo ${server} |cut -d: -f1)"
   ip="$(echo ${server} |cut -d: -f2)"
-  echo "# graph->lines->ip_${ip}->title: ${title} ${ip}"
-  echo "# graph->lines->ip_${ip}->element: AREA"
-  echo "# graph->lines->ip_${ip}->consolidation: AVERAGE"
+  echo "# graph->lines->${ip}->title: ${title} ${ip}"
+  echo "# graph->lines->${ip}->element: AREA"
+  echo "# graph->lines->${ip}->consolidation: AVERAGE"
   let "i=i+1"
 done
 
@@ -25,7 +25,7 @@ for server in $(echo ${servers}); do
   if [ $? -ne 0 ] || [ -z "${result}" ]; then
     result=-1
   fi
-  echo "ip_${ip} ${result}"
+  echo "${ip} ${result}"
   let "i=i+1"
 done
 
