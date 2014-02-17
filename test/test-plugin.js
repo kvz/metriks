@@ -46,7 +46,7 @@ describe('plugin', function(){
              'Two' ],
           lineColors:
            [ '#FFFFFFFF',
-             '#E992ECFF',
+             '#000000FF',
              '#FF0051FF',
              '#9AEBEAFF',
              '#D73A3FFF',
