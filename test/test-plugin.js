@@ -8,9 +8,11 @@ var plugin = new Plugin({
   pngDir      : __dirname + '/png',
   autoWritePng: true,
   cli         : {
-    debug: function(str){console.log(str);},
-    error: function(str){console.log(str);},
-    info : function(str){console.log(str);},
+    info:  function(str) {console.log('INFO:  ' + str); },
+    debug: function(str) {console.log('DEBUG: ' + str); },
+    error: function(str) {console.log('ERROR: ' + str); },
+    fatal: function(str) {console.log('FATAL: ' + str); },
+    ok:    function(str) {console.log('OK:    ' + str); },
   }
 });
 
