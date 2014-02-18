@@ -147,6 +147,7 @@ Metriks is still in early stages of development, here's what needs to be done st
  - [ ] More unit test coverage
  - [ ] Don't crash the main process on plugin fatals.
  - [ ] Show min, max, avg for every ds on every graph by default
+ - [ ] Write metriks version & datetime as watermark to every png
  - [ ] Should we ship an `upstart` file so people can daemonize/respawn/log metriks easily on ubuntu? [Yes](https://twitter.com/purefan/status/435409309858414592). Probably just output a possible config, and let the end user pipe/copy paste/change it, rather than writing to `/etc`
  - [x] Upload to s3 as a step after rrd -> graph -> upload
  - [x] Rename configs. some `graph` to `store`. `graph->lines` to `lines`.
