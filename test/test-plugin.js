@@ -84,9 +84,9 @@ describe('plugin', function(){
       plugin.reload(function (err) {
         var lineStore = plugin.getLineStore('8.8.8.8');
         delete lineStore.rrdFile;
-        console.log(lineStore);
         assert.deepEqual(lineStore, {
          dsType: 'COUNTER',
+          consolidation: 'AVERAGE',
           heartBeat: '599',
           min: 'U',
           max: 'U',

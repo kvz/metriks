@@ -9,9 +9,9 @@ i=0
 for server in ${servers}; do
   title="$(echo ${server} |cut -d: -f1)"
   ip="$(echo ${server} |cut -d: -f2)"
-  echo "# graph->lines->${ip}->title: ${title} ${ip}"
-  echo "# graph->lines->${ip}->element: AREA"
-  echo "# graph->lines->${ip}->consolidation: AVERAGE"
+  echo "# line->${ip}->title: ${title} ${ip}"
+  echo "# line->${ip}->element: AREA"
+  echo "# lineStore->${ip}->consolidation: AVERAGE"
   let "i=i+1"
 done
 
