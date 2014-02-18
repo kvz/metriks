@@ -80,12 +80,11 @@ metriks --auto-write-png false
 
 ### Configuration
 
-You can echo any of these in your `plugin.sh` to hangle behavior of metriks, here are the defaults,
+You can echo any of these in your `plugin.sh` to hangle behavior of metriks, here are the defaults so you might as well set none of these, and get the same results:
 
 ```bash
 # config->interval  : 60
 # config->enabled   : true
-# config->executable: true
 
 # graph->consolidation: 'AVERAGE'
 # graph->xff          : 0.5
@@ -107,7 +106,7 @@ You can echo any of these in your `plugin.sh` to hangle behavior of metriks, her
 # graph->verticalLabel: ''
 
 # graph->lines->${dsName}->title        : '${dsName}'
-# graph->lines->${dsName}->color        : '#44B824FF'
+# graph->lines->${dsName}->color        : '#44B824FF' .. 
 # graph->lines->${dsName}->element      : 'LINE1'
 # graph->lines->${dsName}->consolidation: 'AVERAGE'
 # graph->lines->${dsName}->dsType       : 'GAUGE'
