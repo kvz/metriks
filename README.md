@@ -150,13 +150,7 @@ Metriks is still in early stages of development, here's what needs to be done st
  - [ ] Write metriks version & datetime as watermark to every png
  - [ ] Should we ship an `upstart` file so people can daemonize/respawn/log metriks easily on ubuntu? [Yes](https://twitter.com/purefan/status/435409309858414592). Probably just output a possible config, and let the end user pipe/copy paste/change it, rather than writing to `/etc`
  - [ ] Ship Inconsolate or pick different widely-available font
- - [ ] Handle knox throwing:
-        events.js:72
-        throw er; // Unhandled 'error' event
-                        ^
-          Error: read ECONNRESET
-              at errnoException (net.js:901:11)
-              at TCP.onread (net.js:556:19)
+ - [x] Handle knox throwing: ECONNRESET. See https://github.com/LearnBoost/knox/issues/198
  - [x] Upload to s3 as a step after rrd -> graph -> upload
  - [x] Rename configs. some `graph` to `store`. `graph->lines` to `lines`.
  - [x] Support for `graph->lines->*->` for config that applies to all datasources
