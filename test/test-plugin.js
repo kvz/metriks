@@ -18,10 +18,10 @@ var plugin = new Plugin({
 
 describe('plugin', function(){
   describe('parseSeries', function(){
-    it('single value should return plugin name as key', function(done){
+    it('single value should return plugin name as dsName', function(done){
       plugin.reload(function (err) {
         plugin.parseSeries('1', '', function (err, series) {
-          assert.deepEqual(series, [{"value":1,"key":"count"}]);
+          assert.deepEqual(series, [{"value":1,"dsName":"count"}]);
           done();
         });
       });

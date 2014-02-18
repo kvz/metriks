@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 echo "# config->interval: 60"
 echo "# graph->title: Test resolving nameservers"
+echo "# graph->title: Test resolving nameservers"
 echo "# graph->verticalLabel: Response in ms"
 servers="Google:8.8.8.8 Google:8.8.4.4 Level3:4.2.2.2 OpenDNS:208.67.222.222 AmazonEC2:172.16.0.23"
 

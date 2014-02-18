@@ -19,7 +19,7 @@
  - Minimal dependencies. If you have node.js/npm working, all you need is `aptitude install rrdtool` and you're ready to go
  - Writes RRDs & images to disk, so it works when everything else is down.
  - Idempotent. Metriks will create graphs that don't exist, and generally be eager to get you results.
- - Trivial to add graphs. It should Just Work by default. Write a plugin file in any language. If it outputs a single number, metriks will graph it for you. You can optionally output configuration strings like `# config.interval: 60` or `# graph.title: Load average` to finetune behavior. Newlines (`\n`) separate graph lines. Other whitespaces separate graph label from value. See the [load plugin](https://github.com/kvz/metriks/blob/master/plugins/load.sh) for an example how to plot 3 load lines: 1 minute, 5 minute, 15 minute averages. 
+ - Trivial to add graphs. It should Just Work by default. Write a plugin file in any language. If it outputs a single number, metriks will graph it for you. You can optionally output configuration strings like `# config.interval: 60` or `# graph.title: Load average` to finetune behavior. Newlines (`\n`) separate graph lines. Other whitespaces separate graph label from value. See the [load plugin](https://github.com/kvz/metriks/blob/master/plugins/load.sh) for an example how to plot 3 load lines: 1 minute, 5 minute, 15 minute averages.
  - Can send out alerts when metrics go outside boundaries
 
 Metriks is basic. If you want advanced, there are plenty of options out there like graphite, mrtg, or (paid) librato. You may also want to have a look at druid, riemann and grafana.
@@ -76,11 +76,50 @@ If you don't want to automatically build png files but are only interested in ga
 metriks --auto-write-png false
 ```
 
+## Plugins
+
+### Configuration
+
+You can echo any of these in your `plugin.sh` to hangle behavior of metriks, here are the defaults,
+
+```bash
+# config->interval  : 60
+# config->enabled   : true
+# config->executable: true
+
+# graph->consolidation: 'AVERAGE'
+# graph->xff          : 0.5
+# graph->step         : 1
+# graph->rows         : 300
+
+# graph->width        : 1000
+# graph->height       : 600
+# graph->watermark    : 'kvz.io'
+# graph->font         : 'DEFAULT:10:Inconsolata'
+# graph->tabwidth     : 20
+# graph->border       : 2
+# graph->zoom         : 1
+# graph->fullSizeMode : true
+# graph->dynamicLabels: true
+# graph->slopeMode    : true
+# graph->end          : 'now'
+# graph->start        : 'end-120000s'
+# graph->verticalLabel: ''
+
+# graph->lines->${dsName}->title        : '${dsName}'
+# graph->lines->${dsName}->color        : '#44B824FF'
+# graph->lines->${dsName}->element      : 'LINE1'
+# graph->lines->${dsName}->consolidation: 'AVERAGE'
+# graph->lines->${dsName}->dsType       : 'GAUGE'
+# graph->lines->${dsName}->heartBeat    : 600
+# graph->lines->${dsName}->min          : 'U'
+# graph->lines->${dsName}->max          : 'U'
+```
+
 ## Todo
 
 Metriks is still in early stages of development, here's what needs to be done still:
 
- - [ ] More advanced rrd types (COUNTER vs GAUGE, ability to add a custom step, AREA graphs) as req in [#1](https://github.com/kvz/metriks/issues/1)
  - [ ] Offer an API that so that you can programatically add values in Nodejs programs. e.g. `require('metriks').graph('df').addSeries([{'/': '50%'}])`
  - [ ] Checkout smokeping sources and try to build a plugin very similar to it. This should expose some limitations and make it more usable in different environments after fixing those.
  - [ ] Example plugin: top-10 memory heavy processes (may require "Dynamically expand ds" first)
@@ -94,6 +133,9 @@ Metriks is still in early stages of development, here's what needs to be done st
  - [ ] Don't crash the main process on plugin fatals.
  - [ ] Show min, max, avg for every ds on every graph by default
  - [ ] Should we ship an `upstart` file so people can daemonize/respawn/log metriks easily on ubuntu?
+ - [ ] Rename configs. some `graph` to `store`. `graph->lines` to `lines`.
+ - [x] Support for `graph->lines->*->` for config that applies to all datasources
+ - [x] More advanced rrd types (COUNTER vs GAUGE, ability to add a custom step, AREA graphs) as req in [#1](https://github.com/kvz/metriks/issues/1)
  - [x] Example plugin: network traffic
  - [x] Switch to `->` as a nesting delimiter. People will want to use `.` for IPs and such
  - [x] One theme object to determine colorscheme
