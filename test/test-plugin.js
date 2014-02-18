@@ -40,14 +40,12 @@ describe('plugin', function(){
         assert.strictEqual(plugin.enabled, true);
         assert.strictEqual(plugin.executable, true);
 
+        console.log(plugin.graph);
         assert.deepEqual(plugin.graph, {
-          start: 'end-5s',
+          consolidation: 'AVERAGE',
+          xff: 0.5,
           step: '1',
-          lines: {
-            "1": {"color":"#FFFFFFFF","title":"One"},
-            "2": {"color":"#000000FF","title":"Two"},
-            "8_8_8_8": {"color":"#FF0000FF","title": "IP 8.8.8.8"},
-          },
+          rows: 300,
           width: 1000,
           height: 600,
           watermark: 'kvz.io',
@@ -59,8 +57,12 @@ describe('plugin', function(){
           dynamicLabels: true,
           slopeMode: true,
           end: 'now',
-          verticalLabel: ''
-        });
+          start: 'end-5s',
+          verticalLabel: '',
+          lines:
+           { '1': { color: '#FFFFFFFF', title: 'One' },
+             '2': { color: '#000000FF', title: 'Two' },
+             '8_8_8_8': { color: '#FF0000FF', title: 'IP 8.8.8.8' } } });
         done();
       });
     });

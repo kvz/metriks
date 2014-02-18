@@ -2,6 +2,7 @@
 echo '# config->interval: 1'
 echo "# graph->start: end-5s"
 echo '# graph->step: 1'
+echo "# graph->lines->*->dsType: COUNTER"
 echo "# graph->lines->1->color: #FFFFFFFF"
 echo "# graph->lines->1->title: One"
 echo 1 1.1

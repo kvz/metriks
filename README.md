@@ -106,14 +106,15 @@ You can echo any of these in your `plugin.sh` to hangle behavior of metriks, her
 # graph->start        : 'end-120000s'
 # graph->verticalLabel: ''
 
-# graph->lines->${dsName}->title        : '${dsName}'
-# graph->lines->${dsName}->color        : '#44B824FF'
-# graph->lines->${dsName}->element      : 'LINE1'
-# graph->lines->${dsName}->consolidation: 'AVERAGE'
 # graph->lines->${dsName}->dsType       : 'GAUGE'
 # graph->lines->${dsName}->heartBeat    : 600
 # graph->lines->${dsName}->min          : 'U'
 # graph->lines->${dsName}->max          : 'U'
+
+# graph->lines->${dsName}->title        : '${dsName}'
+# graph->lines->${dsName}->color        : '#44B824FF'
+# graph->lines->${dsName}->element      : 'LINE1'
+# graph->lines->${dsName}->consolidation: 'AVERAGE'
 ```
 
 ## Todo
