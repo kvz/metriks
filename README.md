@@ -86,10 +86,10 @@ You can echo any of these in your `plugin.sh` to hangle behavior of metriks, her
 # config->interval  : 60
 # config->enabled   : true
 
-# graph->consolidation: 'AVERAGE'
-# graph->xff          : 0.5
-# graph->step         : 1
-# graph->rows         : 300
+# graphStore->consolidation: 'AVERAGE'
+# graphStore->xff          : 0.5
+# graphStore->step         : 1
+# graphStore->rows         : 300
 
 # graph->width        : 1000
 # graph->height       : 600
@@ -105,15 +105,15 @@ You can echo any of these in your `plugin.sh` to hangle behavior of metriks, her
 # graph->start        : 'end-120000s'
 # graph->verticalLabel: ''
 
-# graph->lines->${dsName}->dsType       : 'GAUGE'
-# graph->lines->${dsName}->heartBeat    : 600
-# graph->lines->${dsName}->min          : 'U'
-# graph->lines->${dsName}->max          : 'U'
+# lineStore->${dsName}->dsType       : 'GAUGE'
+# lineStore->${dsName}->heartBeat    : 600
+# lineStore->${dsName}->min          : 'U'
+# lineStore->${dsName}->max          : 'U'
 
-# graph->lines->${dsName}->title        : '${dsName}'
-# graph->lines->${dsName}->color        : '#44B824FF' .. '#3A96D0FF'
-# graph->lines->${dsName}->element      : 'LINE1'
-# graph->lines->${dsName}->consolidation: 'AVERAGE'
+# line->${dsName}->title        : '${dsName}'
+# line->${dsName}->color        : '#44B824FF' .. '#3A96D0FF'
+# line->${dsName}->element      : 'LINE1'
+# line->${dsName}->consolidation: 'AVERAGE'
 ```
 
 ## Todo

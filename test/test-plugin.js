@@ -40,12 +40,23 @@ describe('plugin', function(){
         assert.strictEqual(plugin.enabled, true);
         assert.strictEqual(plugin.executable, true);
 
-        console.log(plugin.graph);
-        assert.deepEqual(plugin.graph, {
+        assert.deepEqual(plugin.line, {
+          '1': { color: '#FFFFFFFF', title: 'One' },
+          '2': { color: '#000000FF', title: 'Two' },
+          '8_8_8_8': { color: '#FF0000FF', title: 'IP 8.8.8.8' }
+        });
+        assert.deepEqual(plugin.lineStore, {
+          '8_8_8_8': {
+            heartBeat: '599',
+          }
+        });
+        assert.deepEqual(plugin.graphStore, {
           consolidation: 'AVERAGE',
           xff: 0.5,
-          step: '1',
-          rows: 300,
+          step: '2',
+          rows: 300
+        });
+        assert.deepEqual(plugin.graph, {
           width: 1000,
           height: 600,
           watermark: 'kvz.io',
@@ -59,10 +70,29 @@ describe('plugin', function(){
           end: 'now',
           start: 'end-5s',
           verticalLabel: '',
-          lines:
-           { '1': { color: '#FFFFFFFF', title: 'One' },
-             '2': { color: '#000000FF', title: 'Two' },
-             '8_8_8_8': { color: '#FF0000FF', title: 'IP 8.8.8.8' } } });
+          step: '1'
+        });
+        done();
+      });
+    });
+  });
+});
+
+describe('plugin', function(){
+  describe('getLineStore', function(){
+    it('should enrich lineStore on runtime', function(done){
+      plugin.reload(function (err) {
+        var lineStore = plugin.getLineStore('8.8.8.8');
+        delete lineStore.rrdFile;
+        console.log(lineStore);
+        assert.deepEqual(lineStore, {
+         dsType: 'COUNTER',
+          heartBeat: '599',
+          min: 'U',
+          max: 'U',
+          vName: '8_8_8_8a',
+          dsName: '8_8_8_8'
+        });
         done();
       });
     });

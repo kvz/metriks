@@ -3,9 +3,9 @@
 echo "# graph->title: Network traffic in/out per interface"
 echo "# graph->verticalLabel: Bytes"
 
-echo "# graph->lines->*->element: AREA"
-echo "# graph->lines->*->consolidation: AVERAGE"
-echo "# graph->lines->*->dsType: COUNTER"
+echo "# line->*->element: AREA"
+echo "# lineStore->*->consolidation: AVERAGE"
+echo "# lineStore->*->dsType: COUNTER"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
   netstat -ib |awk '{print $1"-in " $7}' |egrep -v '^(gif|stf|lo|vbox|Name)' |sort -u
