@@ -8,7 +8,7 @@
 
 [![Gittip donate button](http://img.shields.io/gittip/kvz.png)](https://www.gittip.com/kvz/ "Sponsor the development of metriks via Gittip")
 [![Flattr donate button](http://img.shields.io/flattr/donate.png?color=yellow)](https://flattr.com/submit/auto?user_id=kvz&url=https://github.com/kvz/metriks&title=metriks&language=&tags=github&category=software "Sponsor the development of metriks via Flattr")
-[![PayPayl donate button](http://img.shields.io/paypal/donate.png?color=yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=kevin%40vanzonneveld%2enet&lc=NL&item_name=Open%20source%20donation%20to%20Kevin%20van%20Zonneveld&currency_code=USD&bn=PP-DonationsBF%3abtn_donate_SM%2egif%3aNonHosted "Sponsor the development of metriks via Paypal")
+[![PayPal donate button](http://img.shields.io/paypal/donate.png?color=yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=kevin%40vanzonneveld%2enet&lc=NL&item_name=Open%20source%20donation%20to%20Kevin%20van%20Zonneveld&currency_code=USD&bn=PP-DonationsBF%3abtn_donate_SM%2egif%3aNonHosted "Sponsor the development of metriks via Paypal")
 [![BitCoin donate button](http://img.shields.io/bitcoin/donate.png?color=yellow)](https://coinbase.com/checkouts/19BtCjLCboRgTAXiaEvnvkdoRyjd843Dg2 "Sponsor the development of metriks via BitCoin")
 <!-- /badges -->
 
@@ -64,7 +64,7 @@ metriks --rrd-dir /var/lib/rrd
 metriks --png-dir /var/www/graphs
 ```
 
-Metriks contains an simple webserver so you can browse the `png` dir via: 
+Metriks contains an simple webserver so you can browse the `png` dir via:
 
 ```bash
 metriks --web-port 8000
@@ -75,6 +75,22 @@ If you don't want to automatically build png files but are only interested in ga
 ```bash
 metriks --auto-write-png false
 ```
+
+If you want metriks to automatically upload to S3, use:
+
+```bash
+metriks --auto-upload-s3 true
+```
+
+Metriks will look for the following environment variables to do the s3 upload:
+
+```bash
+export METRIKS_S3_KEY=ABCDABCDABCDABCDABCD
+export METRIKS_S3_SECRET=abcdabcdabcdabcdabcdabcdabcdabcdabcdabcd
+export METRIKS_S3_BUCKET=metriks.example.com
+```
+
+The default permission is `public-read`, so be careful with that.
 
 ## Plugins
 
@@ -121,19 +137,19 @@ You can echo any of these in your `plugin.sh` to hangle behavior of metriks, her
 Metriks is still in early stages of development, here's what needs to be done still:
 
  - [ ] Offer an API that so that you can programatically add values in Nodejs programs. e.g. `require('metriks').graph('df').addSeries([{'/': '50%'}])`
- - [ ] Checkout smokeping sources and try to build a plugin very similar to it. This should expose some limitations and make it more usable in different environments after fixing those.
+ - [ ] Checkout smokeping sources and try to build a plugin very similar to it. This should expose some limitations and make it more usable in different environments after fixing those. See [smokeping.md](smokeping.md).
  - [ ] Example plugin: top-10 memory heavy processes (may require "Dynamically expand ds" first)
  - [ ] Example plugins: http://word.bitly.com/post/74839060954/ten-things-to-monitor?h=2
  - [ ] Generate an index page/json of rrd/images. Maybe we can leverage existing `connect` webserver to write html to disk
- - [ ] Upload to s3 as a step after rrd -> graph -> upload
- - [ ] Aggregate datasources into 1 graph using glob
+ - [ ] Aggregate datasources into 1 graph using glob (maybe a separate process that uses s3 as source, can do indexes, aggegates, cleaning up old graphs)
  - [ ] Support for max & min values and a way to communicate problems to the outside world
  - [ ] Dynamically expand ds using rrdtool dump / import. It's hard, see http://stackoverflow.com/questions/13476226/adding-new-datasource-to-an-existing-rrd
  - [ ] More unit test coverage
  - [ ] Don't crash the main process on plugin fatals.
  - [ ] Show min, max, avg for every ds on every graph by default
- - [ ] Should we ship an `upstart` file so people can daemonize/respawn/log metriks easily on ubuntu?
- - [ ] Rename configs. some `graph` to `store`. `graph->lines` to `lines`.
+ - [ ] Should we ship an `upstart` file so people can daemonize/respawn/log metriks easily on ubuntu? [Yes](https://twitter.com/purefan/status/435409309858414592). Probably just output a possible config, and let the end user pipe/copy paste/change it, rather than writing to `/etc`
+ - [x] Upload to s3 as a step after rrd -> graph -> upload
+ - [x] Rename configs. some `graph` to `store`. `graph->lines` to `lines`.
  - [x] Support for `graph->lines->*->` for config that applies to all datasources
  - [x] More advanced rrd types (COUNTER vs GAUGE, ability to add a custom step, AREA graphs) as req in [#1](https://github.com/kvz/metriks/issues/1)
  - [x] Example plugin: network traffic

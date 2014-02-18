@@ -2,11 +2,13 @@ var PluginManager = require('./lib/plugin-manager').PluginManager;
 var WebServer     = require('./lib/web-server').WebServer;
 var cli           = require('cli').enable('status', 'help', 'version', 'glob', 'timeout');
 var workDir       = (process.env.HOME || '/tmp') + '/metriks';
+var _             = require('underscore');
 
 cli.parse({
   "web-port":       [false, 'If > 0, run a webserver on that port to browse graphs', 'number', 0],
   "concurrency":    [false, 'How many plugins to run at once', 'number', 5],
   "auto-write-png": [false, 'Automatically write png files to png-dir', 'boolean', true],
+  "auto-upload-s3": [false, 'Automatically upload static files to s3 bucket (requires environment variables, see readme)', 'boolean', false],
   "name":           [false, 'Name of plugin or rrd file]', 'string' ],
   "plugin-dir":     [false, 'Plugin directory. Overrules workDir. ', 'path', __dirname + '/plugins' ],
   "rrd-dir":        [false, 'RRD directory. Overrules workDir. ', 'path', workDir + '/rrd' ],
@@ -17,13 +19,12 @@ cli.main(function(args, options) {
   var self   = this;
   var config = {};
 
-  for (var key in options) {
-    var val = options[key];
+  _.each(options, function(val, key) {
     var camelCased = key.replace(/\-(.)/g, function (g) {
       return g[1].toUpperCase();
     });
     config[camelCased] = val;
-  }
+  });
 
   config.cli = self;
 
