@@ -12,6 +12,18 @@
 [![BitCoin donate button](http://img.shields.io/bitcoin/donate.png?color=yellow)](https://coinbase.com/checkouts/19BtCjLCboRgTAXiaEvnvkdoRyjd843Dg2 "Sponsor the development of metriks via BitCoin")
 <!-- /badges -->
 
+metriks.io is a time-series graphing tool that runs on servers. if you can output a number, metriks will create a beautiful graph for you.
+it builds on top of 'ancient' `rrdtool` which has proven to work well in production. metriks tries to limit infrastructural dependencies and features in order to provide a robust and pleasant experience for simple graphing needs.
+
+plugins can be written in any language, or you can directly start graphing by tapping into metriks with node:
+
+```javascript
+// metriks is under development, plugins work but the following API is still under discussion:
+var metriks = require('metriks');
+var graph   = metriks.create('df');
+graph.log({'/dev/sda1', '50%'});
+```
+
 ## Features
 
  - Builds on `rrdtool`. The network industry standard of saving time-series data to disk with a constant storage footprint.
@@ -22,14 +34,14 @@
  - Trivial to add graphs. It should Just Work by default. Write a plugin file in any language. If it outputs a single number, metriks will graph it for you. You can optionally output configuration strings like `# config.interval: 60` or `# graph.title: Load average` to finetune behavior. Newlines (`\n`) separate graph lines. Other whitespaces separate graph label from value. See the [load plugin](https://github.com/kvz/metriks/blob/master/plugins/load.sh) for an example how to plot 3 load lines: 1 minute, 5 minute, 15 minute averages.
  - Can send out alerts when metrics go outside boundaries
 
-Metriks is basic. If you want advanced, there are plenty of options out there like graphite, mrtg, or (paid) librato. You may also want to have a look at druid, riemann and grafana.
+Metriks is basic. If you want advanced, there are plenty other good options out there like graphite, mrtg, cacti, munin, influxdb, or (paid) librato. You may also want to have a look at druid, riemann and grafana.
 However **Metriks will never**:
 
  - Require you to deal with perl / cgi-bin / xml / apache / etc
  - Impose steep learning curves
  - Require networked components to be available to do it's job (in favor of graphing locally, optionally aggregating & uploading to e.g. S3)
  - Get in your way
- - Ask for money
+ - Ask for your money
 
 ## Example
 
