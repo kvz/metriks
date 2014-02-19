@@ -10,10 +10,16 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   (
     netstat -ib |awk '{print $1"-in " $7*8}' &&
     netstat -ib |awk '{print $1"-out " $10*8}'
-  ) |egrep -v '^(gif|stf|bridg|ham|p2p|lo|vbox|Name)' |sort -u
+  ) \
+    |egrep -v '^(gif|stf|bridg|ham|p2p|lo|vbox|Name)' \
+    |sort -u
 else
   (
     cat /proc/net/dev |awk '{print $1"-in " $2*8}' &&
     cat /proc/net/dev |awk '{print $1"-out " $10*8}'
-  ) |tail -n-2 |sed 's/://g' |egrep -v '^(lo)'
+  ) \
+    |tail -n-2 \
+    |sed 's/://g' \
+    |egrep -v '^(lo|vbox|bridg)' \
+    |sort -u
 fi
