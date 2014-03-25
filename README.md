@@ -37,9 +37,9 @@ graph.log({'/dev/sda1', '50%'});
 Metriks is basic. If you want advanced, there are plenty other good options out there like graphite, mrtg, observium, cacti, munin, influxdb, or (paid) librato. You may also want to have a look at druid, riemann and grafana.
 However **Metriks will never**:
 
- - Require you to deal with perl / cgi-bin / xml / apache / etc
+ - Require you to deal with a flurry of perl modules / cgi-bin / xml / apache / java / tomcat / etc
  - Impose steep learning curves
- - Require a central piece of intelligence. Metriks runs distributed. Results can be aggregated centrally but on passive components such as S3.
+ - Require a central piece of intelligence. Metriks runs distributed. Results can be aggregated centrally but are then saved as static html / json / images on e.g. S3.
  - Require networked components to be available to do it's job (in favor of graphing locally, optionally aggregating & uploading to e.g. S3)
  - Get in your way
  - Ask for your money
@@ -236,7 +236,7 @@ npm install
 
 ## Run
 
-With debug output, and a built-in webserver to browser resulting png graphs on port 8000
+With debug output, and a built-in webserver to browse resulting png graphs on port 8000
 
 ```bash
 ./bin/metriks --debug --web-port 8000
