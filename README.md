@@ -150,6 +150,7 @@ You can echo any of these in your `plugin.sh` to hangle behavior of metriks, her
 Metriks is still in early stages of development, here's what needs to be done still:
 
  - [ ] Offer an API that so that you can programatically add values in Nodejs programs. e.g. `require('metriks').graph('df').addSeries([{'/': '50%'}])`
+ - [ ] Offer *some* way to pipe data into it. I think STDIN vs using webserver as a dependency for that to accomodate decentralized / local preference
  - [ ] Checkout smokeping sources and try to build a plugin very similar to it. This should expose some limitations and make it more usable in different environments after fixing those. See [smokeping.md](smokeping.md).
  - [ ] Example plugin: top-10 memory heavy processes (may require "Dynamically expand ds" first)
  - [ ] Example plugins: http://word.bitly.com/post/74839060954/ten-things-to-monitor?h=2
