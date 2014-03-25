@@ -34,7 +34,7 @@ graph.log({'/dev/sda1', '50%'});
  - Trivial to add graphs. It should Just Work by default. Write a plugin file in any language. If it outputs a single number, metriks will graph it for you. You can optionally output configuration strings like `# config.interval: 60` or `# graph.title: Load average` to finetune behavior. Newlines (`\n`) separate graph lines. Other whitespaces separate graph label from value. See the [load plugin](https://github.com/kvz/metriks/blob/master/plugins/load.sh) for an example how to plot 3 load lines: 1 minute, 5 minute, 15 minute averages.
  - Can send out alerts when metrics go outside boundaries
 
-Metriks is basic. If you want advanced, there are plenty other good options out there like graphite, mrtg, observium, cacti, munin, influxdb, or (paid) librato. You may also want to have a look at druid, riemann and grafana.
+Metriks is basic. If you want advanced, there are plenty other good options out there like graphite, mrtg, observium, cacti, gnuplot, munin, influxdb, or (paid) librato. You may also want to have a look at druid, riemann and grafana.
 However **Metriks will never**:
 
  - Require you to deal with a flurry of perl modules / cgi-bin / xml / apache / java / tomcat / etc
