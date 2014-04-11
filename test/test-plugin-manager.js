@@ -5,6 +5,7 @@ var PluginManager = require('../lib/plugin-manager').PluginManager;
 var pluginManager = new PluginManager({
   pluginDir: __dirname + '/plugins',
   rrdDir   : __dirname + '/rrd',
+  pngDir   : __dirname + '/png',
   cli      : {
     debug: function(str){console.log(str);},
     error: function(str){console.log(str);},

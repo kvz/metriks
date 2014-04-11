@@ -8,11 +8,11 @@ var plugin = new Plugin({
   pngDir      : __dirname + '/png',
   autoWritePng: true,
   cli         : {
-    info:  function(str) {console.log('INFO:  ' + str); },
+    info : function(str) {console.log('INFO:  ' + str); },
     debug: function(str) {console.log('DEBUG: ' + str); },
     error: function(str) {console.log('ERROR: ' + str); },
     fatal: function(str) {console.log('FATAL: ' + str); },
-    ok:    function(str) {console.log('OK:    ' + str); },
+    ok   : function(str) {console.log('OK:    ' + str); },
   }
 });
 
@@ -40,23 +40,23 @@ describe('plugin', function(){
         assert.strictEqual(plugin.enabled, true);
         assert.strictEqual(plugin.executable, true);
 
-        assert.deepEqual(plugin.line, {
+        assert.deepEqual(plugin.rrd.line, {
           '1': { color: '#FFFFFFFF', title: 'One' },
           '2': { color: '#000000FF', title: 'Two' },
           '8_8_8_8': { color: '#FF0000FF', title: 'IP 8.8.8.8' }
         });
-        assert.deepEqual(plugin.lineStore, {
+        assert.deepEqual(plugin.rrd.lineStore, {
           '8_8_8_8': {
             heartBeat: '599',
           }
         });
-        assert.deepEqual(plugin.graphStore, {
+        assert.deepEqual(plugin.rrd.graphStore, {
           consolidation: 'AVERAGE',
           xff: 0.5,
           step: '2',
           rows: 300
         });
-        assert.deepEqual(plugin.graph, {
+        assert.deepEqual(plugin.rrd.graph, {
           width: 1000,
           height: 600,
           watermark: 'kvz.io',
@@ -82,7 +82,7 @@ describe('plugin', function(){
   describe('getLineStore', function(){
     it('should enrich lineStore on runtime', function(done){
       plugin.reload(function (err) {
-        var lineStore = plugin.getLineStore('8.8.8.8');
+        var lineStore = plugin.rrd.getLineStore('8.8.8.8');
         delete lineStore.rrdFile;
         assert.deepEqual(lineStore, {
          dsType: 'COUNTER',

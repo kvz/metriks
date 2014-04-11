@@ -5,11 +5,6 @@
 [![NPM version](http://badge.fury.io/js/metriks.png)](https://npmjs.org/package/metriks "View this project on NPM")
 [![Dependency Status](https://david-dm.org/kvz/metriks.png?theme=shields.io)](https://david-dm.org/kvz/metriks)
 [![Development Dependency Status](https://david-dm.org/kvz/metriks/dev-status.png?theme=shields.io)](https://david-dm.org/kvz/metriks#info=devDependencies)
-
-[![Gittip donate button](http://img.shields.io/gittip/kvz.png)](https://www.gittip.com/kvz/ "Sponsor the development of metriks via Gittip")
-[![Flattr donate button](http://img.shields.io/flattr/donate.png?color=yellow)](https://flattr.com/submit/auto?user_id=kvz&url=https://github.com/kvz/metriks&title=metriks&language=&tags=github&category=software "Sponsor the development of metriks via Flattr")
-[![PayPal donate button](http://img.shields.io/paypal/donate.png?color=yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=kevin%40vanzonneveld%2enet&lc=NL&item_name=Open%20source%20donation%20to%20Kevin%20van%20Zonneveld&currency_code=USD&bn=PP-DonationsBF%3abtn_donate_SM%2egif%3aNonHosted "Sponsor the development of metriks via Paypal")
-[![BitCoin donate button](http://img.shields.io/bitcoin/donate.png?color=yellow)](https://coinbase.com/checkouts/19BtCjLCboRgTAXiaEvnvkdoRyjd843Dg2 "Sponsor the development of metriks via BitCoin")
 <!-- /badges -->
 
 metriks.io is a time-series graphing tool that runs on servers. if you can output a number, metriks will create a beautiful graph for you.
@@ -151,6 +146,9 @@ Metriks is still in early stages of development, here's what needs to be done st
 
  - [ ] Offer an API that so that you can programatically add values in Nodejs programs. e.g. `require('metriks').graph('df').addSeries([{'/': '50%'}])`
  - [ ] Offer *some* way to pipe data into it. I think STDIN vs using webserver as a dependency for that to accomodate decentralized / local preference
+   - Should already create a graph without the need to define a plugin or run a daemon
+   - Hence should trigger graph->upload
+   - Just check if graph hasn't been written in the last 60 seconds to avoid overhead
  - [ ] Checkout smokeping sources and try to build a plugin very similar to it. This should expose some limitations and make it more usable in different environments after fixing those. See [smokeping.md](smokeping.md).
  - [ ] Example plugin: top-10 memory heavy processes (may require "Dynamically expand ds" first)
  - [ ] Example plugins: http://word.bitly.com/post/74839060954/ten-things-to-monitor?h=2
@@ -163,6 +161,7 @@ Metriks is still in early stages of development, here's what needs to be done st
  - [ ] Write metriks version & datetime as watermark to every png
  - [ ] Should we ship an `upstart` file so people can daemonize/respawn/log metriks easily on ubuntu? [Yes](https://twitter.com/purefan/status/435409309858414592). Probably just output a possible config, and let the end user pipe/copy paste/change it, rather than writing to `/etc`
  - [ ] Ship Inconsolate or pick different widely-available font
+ - [ ] Upgrade dependencies (async)
  - [x] Don't crash the main process on plugin fatals.
  - [x] Handle knox throwing: ECONNRESET. See https://github.com/LearnBoost/knox/issues/198
  - [x] Upload to s3 as a step after rrd -> graph -> upload
@@ -200,11 +199,13 @@ Metriks is still in early stages of development, here's what needs to be done st
 
 ## Prerequisites
 
-I'm assuming you already have [node 0.8+](http://nodejs.org/download/) and [Git](http://git-scm.com/downloads) available.
+I'm assuming you already have [node 0.8+](http://nodejs.org/download/) and
+[Git](http://git-scm.com/downloads) available.
 
 ### OSX
 
-To run rrdtool on OSX you'll need [XQuartz](http://xquartz.macosforge.org). Then via [Homebrew](http://brew.sh/):
+To run rrdtool on OSX you'll need [XQuartz](http://xquartz.macosforge.org).
+Then via [Homebrew](http://brew.sh/):
 
 ```bash
 brew install rrdtool coreutils
@@ -254,3 +255,11 @@ make test
 [MIT LICENSE](LICENSE)
 
 
+## Sponsor development
+
+<!-- badges/ -->
+[![Gittip donate button](http://img.shields.io/gittip/kvz.png)](https://www.gittip.com/kvz/ "Sponsor the development of metriks via Gittip")
+[![Flattr donate button](http://img.shields.io/flattr/donate.png?color=yellow)](https://flattr.com/submit/auto?user_id=kvz&url=https://github.com/kvz/metriks&title=metriks&language=&tags=github&category=software "Sponsor the development of metriks via Flattr")
+[![PayPal donate button](http://img.shields.io/paypal/donate.png?color=yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=kevin%40vanzonneveld%2enet&lc=NL&item_name=Open%20source%20donation%20to%20Kevin%20van%20Zonneveld&currency_code=USD&bn=PP-DonationsBF%3abtn_donate_SM%2egif%3aNonHosted "Sponsor the development of metriks via Paypal")
+[![BitCoin donate button](http://img.shields.io/bitcoin/donate.png?color=yellow)](https://coinbase.com/checkouts/19BtCjLCboRgTAXiaEvnvkdoRyjd843Dg2 "Sponsor the development of metriks via BitCoin")
+<!-- /badges -->
