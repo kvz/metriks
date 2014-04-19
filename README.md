@@ -149,6 +149,7 @@ Metriks is still in early stages of development, here's what needs to be done st
    - Should already create a graph without the need to define a plugin or run a daemon
    - Hence should trigger graph->upload
    - Just check if graph hasn't been written in the last 60 seconds to avoid overhead
+   - Idea: I think this should be a separate tool.js that requires metriks and uses it's api to handle this. Vs having metriks support the stdin & configuration problems that come with that. More flexibel. Cleaner main program.
  - [ ] Checkout smokeping sources and try to build a plugin very similar to it. This should expose some limitations and make it more usable in different environments after fixing those. See [smokeping.md](smokeping.md).
  - [ ] Example plugin: top-10 memory heavy processes (may require "Dynamically expand ds" first)
  - [ ] Example plugins: http://word.bitly.com/post/74839060954/ten-things-to-monitor?h=2
