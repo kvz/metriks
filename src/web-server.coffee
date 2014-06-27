@@ -19,6 +19,6 @@ class WebServer extends Base
     )
     server.use connect.directory(@pngDir, {})
     server.listen @webPort, ->
-      @cli.info util.format("Serving %s on port %s", @pngDir, @webPort)
+      @info("Serving %s on port %s", @pngDir, @webPort)
 
 exports.WebServer = WebServer

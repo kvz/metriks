@@ -131,7 +131,7 @@ class RRD extends Base
   _mkdir: (cb) ->
     rrdDir = path.dirname(@rrdFile)
     return cb(null)  if fs.existsSync(rrdDir)
-    @cli.info util.format("Creating directory %s", rrdDir)
+    @info("Creating directory %s", rrdDir)
     mkdirp rrdDir, (err) ->
       return cb(err)  if err
       cb null
@@ -201,7 +201,7 @@ class RRD extends Base
         # Mkdir
         pngDir = path.dirname(@pngFile)
         return callback(null)  if fs.existsSync(pngDir)
-        @cli.info util.format("Creating directory %s", pngDir)
+        @info("Creating directory %s", pngDir)
         mkdirp pngDir, (err) ->
           return callback(err)  if err
           callback null

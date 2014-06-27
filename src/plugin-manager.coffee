@@ -10,13 +10,11 @@ util    = require "util"
 path    = require "path"
 mkdirp  = require "mkdirp"
 Base    = require("./base").Base
-Logging = require("./logging")
 
 class PluginManager extends Base
   constructor: (config) ->
     super config
 
-    @info "WATF"
 
     # mgr config
     @pluginDir   = null
@@ -52,10 +50,10 @@ class PluginManager extends Base
       plugin = @find(pattern)
       @_writePNG plugin, (err) =>
         throw err  if err
-        @cli.info util.format("open %s", plugin.pngFile)
+        @info("open %s", plugin.pngFile)
 
   _loop: (plugin, cb) =>
-    @cli.info util.format("Running plugin %s at interval %s to %s", plugin.name, plugin.interval, plugin.rrdFile)
+    @info("Running plugin %s at interval %s to %s", plugin.name, plugin.interval, plugin.rrdFile)
     plugin.run cb
 
     # Reschedule
@@ -70,17 +68,17 @@ class PluginManager extends Base
       _.each @_plugins, (plugin) =>
         # Loop plugin
         unless plugin.executable
-          @cli.debug util.format("Skipping plugin %s as it is not executable", plugin.name)
+          @debug("Skipping plugin %s as it is not executable", plugin.name)
           return
         unless plugin.enabled
-          @cli.debug util.format("Skipping plugin %s as it is not enabled", plugin.name)
+          @debug("Skipping plugin %s as it is not enabled", plugin.name)
           return
         @_q = async.queue((plugin, cb) =>
           # We need to pass on `self`
           @_loop plugin, cb
         , @concurrency)
         @_q.drain = =>
-          @cli.debug util.format("waiting for new items to be pushed to queue")
+          @debug("waiting for new items to be pushed to queue")
 
         @_q.push plugin
 

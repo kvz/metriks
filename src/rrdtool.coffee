@@ -38,7 +38,7 @@ class RRDTool extends Base
       args.push val + ""
 
     fullCmd = "rrdtool " + @escape(args)
-    @cli.debug fullCmd
+    @debug fullCmd
     opts =
       encoding  : "utf8"
       timeout   : 50 * 1000
@@ -94,13 +94,13 @@ class RRDTool extends Base
     unless fs.existsSync(rrdFile)
 
       # rrd file doesn not exist (yet)
-      @cli.debug "rrd file doesn not exist (yet) " + rrdFile
+      @debug "rrd file doesn not exist (yet) " + rrdFile
       return cb(null, null)
     @exe "info", options, (err, stdout) =>
       return cb(err)  if err
       info = @explodeTree(stdout)
       unless "ds" of info
-        @cli.debug
+        @debug
           rrdFile: rrdFile
           info: info
           stdout: stdout

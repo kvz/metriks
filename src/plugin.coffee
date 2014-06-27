@@ -31,7 +31,7 @@ class Plugin extends Base
   reload: (cb) ->
 
     # Parse options from source's comments
-    @cli.info util.format("Loading plugin %s. This also executes it with 'config' parameter so you can print dynamic config. ", @pluginFile)
+    @info("Loading plugin %s. This also executes it with 'config' parameter so you can print dynamic config. ", @pluginFile)
     opts =
       encoding: "utf8"
       timeout: 10 * 1000
@@ -86,10 +86,7 @@ class Plugin extends Base
       )
       cb null
 
-  ###
-  Loop a single plugin based on options.interval
-  @param  {[type]} plugin
-  ###
+  # Loop a single plugin based on options.interval
   run: (cb) ->
     tasks = []
 
@@ -111,33 +108,27 @@ class Plugin extends Base
           callback err
 
     async.waterfall tasks, (err) =>
-      return @cli.error(util.format("failure %s.", err))  if err
-      @cli.info util.format("%s task(s) for plugin %s complete", tasks.length, @name)
+      return @error(util.format("failure %s.", err))  if err
+      @info("%s task(s) for plugin %s complete", tasks.length, @name)
       cb null
 
-  ###
-  Parse plugin output
-  @param  {object} plugin
-  @param  {string} output
-  @return {object}
-  ###
   parseSeries: (stdout, stderr, cb) ->
     series = []
-    cnt = 0
+    cnt    = 0
     stdout.trim().split("\n").forEach (line) =>
       return  if line.substr(0, 1) is "#"
       columns = line.trim().split(/\s+/)
-      dsName = undefined
-      value = undefined
+      dsName  = undefined
+      value   = undefined
       cnt++
       if columns.length > 1
         # Name the line by first column
         dsName = columns.shift()
-        value = columns.join(" ")
+        value  = columns.join(" ")
       else
         # Name the line by row-index
         dsName = cnt
-        value = columns.join(" ")
+        value  = columns.join(" ")
 
       # Sanitize and push
       series.push
@@ -158,16 +149,16 @@ class Plugin extends Base
       (callback) =>
         # Execute plugin
         opts =
-          encoding: "utf8"
-          timeout: @timeout * 1000
-          maxBuffer: 200 * 1024
+          encoding  : "utf8"
+          timeout   : @timeout * 1000
+          maxBuffer : 200 * 1024
           killSignal: "SIGTERM"
-          cwd: path.dirname(@pluginFile)
-          env: process.env
+          cwd       : path.dirname(@pluginFile)
+          env       : process.env
 
         exec @pluginFile, opts, (err, stdout, stderr) =>
           return callback(new Error(util.format("Cannot execute %s. %s", @pluginFile, stderr)))  if err
-          @cli.error util.format("Saw stderr while running plugin: %s", stderr)  if stderr
+          @error util.format("Saw stderr while running plugin: %s", stderr)  if stderr
           callback err, stdout, stderr
 
       ,(stdout, stderr, callback) =>
@@ -183,7 +174,7 @@ class Plugin extends Base
 
   _uploadS3: (cb) ->
     config =
-      key: "METRIKS_S3_KEY"
+      key   : "METRIKS_S3_KEY"
       secret: "METRIKS_S3_SECRET"
       bucket: "METRIKS_S3_BUCKET"
 
@@ -192,12 +183,12 @@ class Plugin extends Base
       return cb(new Error(util.format("No ds found in info for %s", "Please set a %s environment var with the S3 %s ", env, key)))  unless v = process.env[env]
       config[key] = v
 
-    client = knox.createClient(config)
-    files = {}
+    client              = knox.createClient(config)
+    files               = {}
     files[@rrd.pngFile] = @pngDir
     files[@rrd.rrdFile] = @rrdDir
-    uploaded = 0
-    needed = 0
+    uploaded            = 0
+    needed              = 0
     _.each files, (dir, file) ->
       if fs.existsSync(file)
         needed++
