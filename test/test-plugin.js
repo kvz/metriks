@@ -2,7 +2,7 @@ var coffee  = require('coffee-script/register');
 var assert = require('assert');
 var cli    = require('cli');
 var os     = require('os');
-var Plugin = require('../lib/plugin').Plugin;
+var Plugin = require('../src/plugin').Plugin;
 var plugin = new Plugin({
   pluginFile  : __dirname + '/plugins/count.sh',
   rrdDir      : __dirname + '/rrd',

@@ -9,10 +9,12 @@ sys                = require "sys"
 util               = require "util"
 path               = require "path"
 mkdirp             = require "mkdirp"
+Base               = require("./base").Base
 _.templateSettings = interpolate: /\{(.+?)\}/g
 
-class RRD
+class RRD extends Base
   constructor: (config) ->
+    super config
     @theme =
       BACK  : "#1D1D1DFF"
       CANVAS: "#141414FF"
@@ -84,29 +86,6 @@ class RRD
     @rrdFile     = null
     @pngFile     = null
 
-    # mgr config
-    @cli =
-      info: (str) ->
-        console.log "INFO:  " + str
-        return
-
-      debug: (str) ->
-        console.log "DEBUG: " + str
-        return
-
-      error: (str) ->
-        console.log "ERROR: " + str
-        return
-
-      fatal: (str) ->
-        console.log "FATAL: " + str
-        return
-
-      ok: (str) ->
-        console.log "OK:    " + str
-        return
-
-
     # Merge passed config
     _.extend this, config
     @rrdtool = new RRDTool(cli: @cli)
@@ -149,113 +128,108 @@ class RRD
     throw new Error("Please set the rrdDir")  unless @rrdDir
     throw new Error("Please set the pngDir")  unless @pngDir
 
+  _mkdir: (cb) ->
+    rrdDir = path.dirname(@rrdFile)
+    return cb(null)  if fs.existsSync(rrdDir)
+    @cli.info util.format("Creating directory %s", rrdDir)
+    mkdirp rrdDir, (err) ->
+      return cb(err)  if err
+      cb null
+
+  _findInfo: (cb) ->
+    @rrdtool.info @rrdFile, [], (err, info) ->
+      return cb(err)  if err
+      cb null, info
+      return
+
+  _create: (series, info, cb) ->
+    values = []
+    rrdCreateOptions = []
+    series.forEach (item, lineIndex) =>
+      rrdCreateOptions.push _.template("DS:{ dsName }:{ dsType }:{ heartBeat }:{ min }:{ max }")(@getLineStore(item.dsName, lineIndex))
+      values.push item.value
+
+    rrdCreateOptions.push _.template("RRA:{ consolidation }:{ xff }:{ step }:{ rows }")(@graphStore)
+    if info is null
+      # Info is null if the rrd didn't exist yet
+      @rrdtool.create @rrdFile, rrdCreateOptions, (err, output) ->
+        cb err, values
+    else
+      datasourcesInRRD = _.keys(info.ds)
+      series.forEach (item, seriesIndex) ->
+        cb new Error(util.format("Something generates datasource \"%s\", but rrd %s holds \"%s\" in this location (%s). All dsNames: %s", item.dsName, @rrdFile, datasourcesInRRD[item.dsName], seriesIndex, datasourcesInRRD.join(", ")))  if datasourcesInRRD[seriesIndex] isnt item.dsName
+
+      return cb(new Error(util.format("Something generates %s datasources, but rrd %s was created with %s. ", series.length, @rrdFile, datasourcesInRRD.length)))  if series.length isnt datasourcesInRRD.length
+      return cb(null, values)
+
+  _update: (values, cb) ->
+    # Update rrd with series
+    @rrdtool.update @rrdFile, new Date(), values, [], (err, output) ->
+      cb null
+
   update: (series, cb) ->
-    self = this
-    async.waterfall [
-      (callback) ->
-        # Mkdir
-        rrdDir = path.dirname(self.rrdFile)
-        return callback(null)  if fs.existsSync(rrdDir)
-        self.cli.info util.format("Creating directory %s", rrdDir)
-        mkdirp rrdDir, (err) ->
-          return callback(err)  if err
-          callback null
-
-      ,(callback) ->
-        # Find info
-        self.rrdtool.info self.rrdFile, [], (err, info) ->
-          return callback(err)  if err
-          callback null, info
-          return
-
-      ,(info, callback) ->
-        # Create rrds if needed
-        values = []
-        rrdCreateOptions = []
-        series.forEach (item, lineIndex) ->
-          rrdCreateOptions.push _.template("DS:{ dsName }:{ dsType }:{ heartBeat }:{ min }:{ max }")(self.getLineStore(item.dsName, lineIndex))
-          values.push item.value
-
-        rrdCreateOptions.push _.template("RRA:{ consolidation }:{ xff }:{ step }:{ rows }")(self.graphStore)
-        if info is null
-          # Info is null if the rrd didn't exist yet
-          self.rrdtool.create self.rrdFile, rrdCreateOptions, (err, output) ->
-            callback err, values
-        else
-          datasourcesInRRD = _.keys(info.ds)
-          series.forEach (item, seriesIndex) ->
-            callback new Error(util.format("Something generates datasource \"%s\", but rrd %s holds \"%s\" in this location (%s). All dsNames: %s", item.dsName, self.rrdFile, datasourcesInRRD[item.dsName], seriesIndex, datasourcesInRRD.join(", ")))  if datasourcesInRRD[seriesIndex] isnt item.dsName
-
-          return callback(new Error(util.format("Something generates %s datasources, but rrd %s was created with %s. ", series.length, self.rrdFile, datasourcesInRRD.length)))  if series.length isnt datasourcesInRRD.length
-          return callback(null, values)
-      ,(values, callback) ->
-        # Update rrd with series
-        self.rrdtool.update self.rrdFile, new Date(), values, [], (err, output) ->
-          callback null
-          return
-
-    ], (err) ->
-      cb err
+    @_mkdir =>
+      @_findInfo (err, info) =>
+        @_create series, info, (err, values) =>
+          @_update values, (err) =>
+            cb err
 
   getLineStore: (dsName, lineIndex) ->
-    self      = this
-    dsName    = self.rrdtool.toDatasourceName(dsName)
+    dsName    = @rrdtool.toDatasourceName(dsName)
     lineStore = {}
-    _.extend lineStore, self.defaultLineStore,
+    _.extend lineStore, @defaultLineStore,
       vName: dsName + "a"
-      rrdFile: self.rrdFile
-    , self.lineStore[dsName],
+      rrdFile: @rrdFile
+    , @lineStore[dsName],
       dsName: dsName
 
     lineStore
 
   getLine: (dsName, lineIndex) ->
-    self   = this
-    dsName = self.rrdtool.toDatasourceName(dsName)
+    dsName = @rrdtool.toDatasourceName(dsName)
     line   = {}
-    _.extend line, self.defaultLine,
+    _.extend line, @defaultLine,
       vName: dsName + "a"
       title: dsName
-      color: self.theme.LINES[lineIndex]
-    , self.line[dsName]
+      color: @theme.LINES[lineIndex]
+    , @line[dsName]
     line
 
-  grapher: (cb) ->
-    self = this
+  grapher: (cb) =>
     async.waterfall [
-      (callback) ->
+      (callback) =>
         # Mkdir
-        pngDir = path.dirname(self.pngFile)
+        pngDir = path.dirname(@pngFile)
         return callback(null)  if fs.existsSync(pngDir)
-        self.cli.info util.format("Creating directory %s", pngDir)
+        @cli.info util.format("Creating directory %s", pngDir)
         mkdirp pngDir, (err) ->
           return callback(err)  if err
           callback null
 
-      , (callback) ->
-        self.rrdtool.info self.rrdFile, [], (err, info) ->
+      , (callback) =>
+        @rrdtool.info @rrdFile, [], (err, info) =>
           return callback(err)  if err
 
           # Leave out any graph object property that's not a true rrd graph parameter
           rrdGraphOptions = []
-          rrdGraphOptions.push self.graph
+          rrdGraphOptions.push @graph
 
           # Apply theme border/canvas/font colors
-          _.each self.theme, (themeColor, themeKey) ->
+          _.each @theme, (themeColor, themeKey) =>
             if _.isString(themeColor)
               rrdGraphOptions.push "--color"
               rrdGraphOptions.push themeKey + themeColor
 
           # Loop over each ds, merge params and push to rrdGraphOptions array
-          _.keys(info.ds).forEach (dsName, lineIndex) ->
-            rrdGraphOptions.push _.template("DEF:{ vName }={ rrdFile }:{ dsName }:{ consolidation }")(self.getLineStore(dsName, lineIndex))
-            rrdGraphOptions.push _.template("{ element }:{ vName }{ color }:{ title }\\\\l")(self.getLine(dsName, lineIndex))
+          _.keys(info.ds).forEach (dsName, lineIndex) =>
+            rrdGraphOptions.push _.template("DEF:{ vName }={ rrdFile }:{ dsName }:{ consolidation }")(@getLineStore(dsName, lineIndex))
+            rrdGraphOptions.push _.template("{ element }:{ vName }{ color }:{ title }\\\\l")(@getLine(dsName, lineIndex))
 
           callback null, rrdGraphOptions
           return
 
-      , (rrdGraphOptions, callback) ->
-        self.rrdtool.graph self.pngFile, rrdGraphOptions, (err, output) ->
+      , (rrdGraphOptions, callback) =>
+        @rrdtool.graph @pngFile, rrdGraphOptions, (err, output) ->
           return callback(err)  if err
           callback null
 

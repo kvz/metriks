@@ -6,8 +6,8 @@ function Metriks(config) {
   this.pluginManager = new PluginManager(this.config);
 }
 
-var PluginManager = require('./lib/plugin-manager').PluginManager;
-var WebServer     = require('./lib/web-server').WebServer;
+var PluginManager = require('./src/plugin-manager').PluginManager;
+var WebServer     = require('./src/web-server').WebServer;
 
 
 Metriks.prototype.start = function() {

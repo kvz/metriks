@@ -1,6 +1,6 @@
 var coffee  = require('coffee-script/register');
 var assert  = require('assert');
-var RRDTool = require('../lib/rrdtool').RRDTool;
+var RRDTool = require('../src/rrdtool').RRDTool;
 var rrdtool = new RRDTool();
 
 var rrdFilePing        = __dirname + '/ping.rrd';

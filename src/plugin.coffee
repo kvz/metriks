@@ -10,10 +10,12 @@ sys                = require "sys"
 util               = require "util"
 path               = require "path"
 knox               = require "knox"
+Base               = require("./base").Base
 _.templateSettings = interpolate: /\{(.+?)\}/g
 
-class Plugin
+class Plugin extends Base
   constructor: (config) ->
+    super config
     @defaultConfig =
       interval: "60"
       enabled: true
@@ -23,39 +25,23 @@ class Plugin
     @pluginFile = null
     @autoWritePng = null
     @autoUploadS3 = null
-    @cli =
-      info: (str) ->
-        console.log "INFO:  " + str
-
-      debug: (str) ->
-        console.log "DEBUG: " + str
-
-      error: (str) ->
-        console.log "ERROR: " + str
-
-      fatal: (str) ->
-        console.log "FATAL: " + str
-
-      ok: (str) ->
-        console.log "OK:    " + str
 
     _.extend this, config
 
   reload: (cb) ->
-    self = this
 
     # Parse options from source's comments
-    self.cli.info util.format("Loading plugin %s. This also executes it with 'config' parameter so you can print dynamic config. ", self.pluginFile)
+    @cli.info util.format("Loading plugin %s. This also executes it with 'config' parameter so you can print dynamic config. ", @pluginFile)
     opts =
       encoding: "utf8"
       timeout: 10 * 1000
       maxBuffer: 200 * 1024
       killSignal: "SIGTERM"
-      cwd: path.dirname(self.pluginFile)
+      cwd: path.dirname(@pluginFile)
       env: process.ENV
 
-    exec self.pluginFile + " config", opts, (err, stdout, stderr) ->
-      return cb(new Error(util.format("Cannot execute plugin %s. If you want to disable please set '# config.enable: false'. %s %s %s", self.pluginFile, stderr, err, stdout)))  if err
+    exec @pluginFile + " config", opts, (err, stdout, stderr) =>
+      return cb(new Error(util.format("Cannot execute plugin %s. If you want to disable please set '# config.enable: false'. %s %s %s", @pluginFile, stderr, err, stdout)))  if err
 
       # Parse comment header
       flat = {}
@@ -73,26 +59,26 @@ class Plugin
       )
 
       # Apply defaults to said config
-      _.extend self, self.defaultConfig, nested.config
+      _.extend this, @defaultConfig, nested.config
 
       # Fixed plugin options
-      self.name = path.basename(self.pluginFile, ".sh")
-      self.executable = !!(1 & parseInt((fs.statSync(self.pluginFile).mode & parseInt("777", 8)).toString(8)[0]))
-      if self.enabled is "false"
-        self.enabled = false
+      @name = path.basename(@pluginFile, ".sh")
+      @executable = !!(1 & parseInt((fs.statSync(@pluginFile).mode & parseInt("777", 8)).toString(8)[0]))
+      if @enabled is "false"
+        @enabled = false
       else
-        self.enabled = true
-      unless self.timeout
+        @enabled = true
+      unless @timeout
 
         # Set plugin timeout to be slightly lower than interval if possible
-        self.timeout = self.interval - 10
-        self.timeout = 50  if self.timeout < 10
-      self.interval = self.interval * 1
-      self.rrd = new RRD(
-        rrdDir: self.rrdDir
-        pngDir: self.pngDir
-        cli: self.cli
-        name: self.name
+        @timeout = @interval - 10
+        @timeout = 50  if @timeout < 10
+      @interval = @interval * 1
+      @rrd = new RRD(
+        rrdDir: @rrdDir
+        pngDir: @pngDir
+        cli: @cli
+        name: @name
         graph: nested.graph
         graphStore: nested.graphStore
         line: nested.line
@@ -105,29 +91,28 @@ class Plugin
   @param  {[type]} plugin
   ###
   run: (cb) ->
-    self = this
     tasks = []
 
     # Always write rrds
-    tasks.push (callback) ->
-      self._execute (err) ->
+    tasks.push (callback) =>
+      @_execute (err) ->
         callback err
 
     # Optionally write pngs
-    if self.autoWritePng
-      tasks.push (callback) ->
-        self.rrd.grapher (err) ->
+    if @autoWritePng
+      tasks.push (callback) =>
+        @rrd.grapher (err) ->
           callback err
 
     # Optionally upload to s3
-    if self.autoUploadS3
-      tasks.push (callback) ->
-        self._uploadS3 (err) ->
+    if @autoUploadS3
+      tasks.push (callback) =>
+        @_uploadS3 (err) ->
           callback err
 
-    async.waterfall tasks, (err) ->
-      return self.cli.error(util.format("failure %s.", err))  if err
-      self.cli.info util.format("%s task(s) for plugin %s complete", tasks.length, self.name)
+    async.waterfall tasks, (err) =>
+      return @cli.error(util.format("failure %s.", err))  if err
+      @cli.info util.format("%s task(s) for plugin %s complete", tasks.length, @name)
       cb null
 
   ###
@@ -137,10 +122,9 @@ class Plugin
   @return {object}
   ###
   parseSeries: (stdout, stderr, cb) ->
-    self = this
     series = []
     cnt = 0
-    stdout.trim().split("\n").forEach (line) ->
+    stdout.trim().split("\n").forEach (line) =>
       return  if line.substr(0, 1) is "#"
       columns = line.trim().split(/\s+/)
       dsName = undefined
@@ -157,49 +141,47 @@ class Plugin
 
       # Sanitize and push
       series.push
-        value: self.rrd.rrdtool.toVal(value)
-        dsName: self.rrd.rrdtool.toDatasourceName(dsName)
+        value: @rrd.rrdtool.toVal(value)
+        dsName: @rrd.rrdtool.toDatasourceName(dsName)
 
 
     # If there is 1 row and no column name, name the line after the graph.
     # e.g.: 'uptime'
-    if series.length is 1 and self.rrd.rrdtool.isNumeric(series[0].dsName)
-      return cb(new Error(util.format("Plugin has no name when it was needed to label simplistic series")))  unless self.name
-      series[0].dsName = self.rrd.rrdtool.toDatasourceName(self.name)
+    if series.length is 1 and @rrd.rrdtool.isNumeric(series[0].dsName)
+      return cb(new Error(util.format("Plugin has no name when it was needed to label simplistic series")))  unless @name
+      series[0].dsName = @rrd.rrdtool.toDatasourceName(@name)
 
     cb null, series
 
   _execute: (cb) ->
-    self = this
     async.waterfall [
-      (callback) ->
+      (callback) =>
         # Execute plugin
         opts =
           encoding: "utf8"
-          timeout: self.timeout * 1000
+          timeout: @timeout * 1000
           maxBuffer: 200 * 1024
           killSignal: "SIGTERM"
-          cwd: path.dirname(self.pluginFile)
+          cwd: path.dirname(@pluginFile)
           env: process.env
 
-        exec self.pluginFile, opts, (err, stdout, stderr) ->
-          return callback(new Error(util.format("Cannot execute %s. %s", self.pluginFile, stderr)))  if err
-          self.cli.error util.format("Saw stderr while running plugin: %s", stderr)  if stderr
+        exec @pluginFile, opts, (err, stdout, stderr) =>
+          return callback(new Error(util.format("Cannot execute %s. %s", @pluginFile, stderr)))  if err
+          @cli.error util.format("Saw stderr while running plugin: %s", stderr)  if stderr
           callback err, stdout, stderr
 
-      ,(stdout, stderr, callback) ->
+      ,(stdout, stderr, callback) =>
         # Convert output to series
-        self.parseSeries stdout, stderr, (err, series) ->
+        @parseSeries stdout, stderr, (err, series) ->
           return callback(err)  if err
           callback null, series
 
-      ,(series, callback) ->
-        self.rrd.update series, callback
+      ,(series, callback) =>
+        @rrd.update series, callback
     ], (err) ->
       cb err
 
   _uploadS3: (cb) ->
-    self = this
     config =
       key: "METRIKS_S3_KEY"
       secret: "METRIKS_S3_SECRET"
@@ -212,8 +194,8 @@ class Plugin
 
     client = knox.createClient(config)
     files = {}
-    files[self.rrd.pngFile] = self.pngDir
-    files[self.rrd.rrdFile] = self.rrdDir
+    files[@rrd.pngFile] = @pngDir
+    files[@rrd.rrdFile] = @rrdDir
     uploaded = 0
     needed = 0
     _.each files, (dir, file) ->

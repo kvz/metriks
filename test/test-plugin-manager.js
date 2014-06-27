@@ -2,7 +2,7 @@ var coffee  = require('coffee-script/register');
 var assert        = require('assert');
 var cli           = require('cli');
 var os            = require('os');
-var PluginManager = require('../lib/plugin-manager').PluginManager;
+var PluginManager = require('../src/plugin-manager').PluginManager;
 var pluginManager = new PluginManager({
   pluginDir: __dirname + '/plugins',
   rrdDir   : __dirname + '/rrd',

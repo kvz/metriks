@@ -4,40 +4,24 @@ _         = require "underscore"
 sys       = require "sys"
 fs        = require "fs"
 util      = require "util"
+Base      = require("./base").Base
 
-class RRDTool
+class RRDTool extends Base
   constructor: (config) ->
-    @cli =
-      info: (str) ->
-        console.log "INFO:  " + str
-
-      debug: (str) ->
-        console.log "DEBUG: " + str
-
-      error: (str) ->
-        console.log "ERROR: " + str
-
-      fatal: (str) ->
-        console.log "FATAL: " + str
-
-      ok: (str) ->
-        console.log "OK:    " + str
-
+    super config
     _.extend this, config
 
   escape: (args) ->
-
     # Escape everything that is potentially unsafe with a backslash
     # return (argument+'').trim().replace(/([^0-9a-zA-Z-])/g, '\\$1');
     # rrdtool requires different escaping
     Array::slice.call(args).map((argument) ->
-      argument = ""  if argument is `undefined` or argument is null
+      argument = ""  if !argument?
       return "''"  if argument is ""
       (argument + "").trim().replace /([^0-9a-zA-Z-\\\"\_\.\/\:])/g, "\\$1"
     ).join " "
 
   exe: (cmd, options, cb) ->
-    self = this
     args = []
     args.push cmd
     options.forEach (val, key) ->
@@ -54,8 +38,8 @@ class RRDTool
         return
       args.push val + ""
 
-    fullCmd = "rrdtool " + self.escape(args)
-    self.cli.debug fullCmd
+    fullCmd = "rrdtool " + @escape(args)
+    @cli.debug fullCmd
     opts =
       encoding: "utf8"
       timeout: 50 * 1000
@@ -91,42 +75,38 @@ class RRDTool
     options
 
   create: (rrdFile, options, cb) ->
-    self = this
     options = options or []
     options.unshift rrdFile
-    options = self._default(options,
+    options = @_default(options,
       start: new Date()
       step : 300
     )
-    self.exe "create", options, cb
+    @exe "create", options, cb
 
   update: (rrdFile, time, values, options, cb) ->
-    self = this
     options = options or []
     options.unshift rrdFile
-    options.push self.rrdTime(time) + ":" + values.join(":")
-    self.exe "update", options, cb
+    options.push @rrdTime(time) + ":" + values.join(":")
+    @exe "update", options, cb
 
   graph: (pngFile, options, cb) ->
-    self = this
     options = options or []
     options.unshift pngFile
-    self.exe "graph", options, cb
+    @exe "graph", options, cb
 
   info: (rrdFile, options, cb) ->
-    self = this
     options = options or []
     options.unshift rrdFile
     unless fs.existsSync(rrdFile)
 
       # rrd file doesn not exist (yet)
-      self.cli.debug "rrd file doesn not exist (yet) " + rrdFile
+      @cli.debug "rrd file doesn not exist (yet) " + rrdFile
       return cb(null, null)
-    self.exe "info", options, (err, stdout) ->
+    @exe "info", options, (err, stdout) =>
       return cb(err)  if err
-      info = self.explodeTree(stdout)
+      info = @explodeTree(stdout)
       unless "ds" of info
-        self.cli.debug
+        @cli.debug
           rrdFile: rrdFile
           info: info
           stdout: stdout
@@ -136,20 +116,18 @@ class RRDTool
 
 
   explodeTree: (buf) ->
-    self = this
     flat = {}
-    buf.split("\n").forEach (line) ->
+    buf.split("\n").forEach (line) =>
       parts = line.split(" = ")
       rawKey = parts.shift()
       rawVal = parts.join(" = ")
       key = rawKey.replace(/[\.\[\]]+/g, ".").replace(/^\[/, "").replace(/\]$/, "")
-      flat[key] = self.toVal(rawVal)
+      flat[key] = @toVal(rawVal)
 
     unflatten flat
 
   toVal: (val) ->
-    self = this
-    if self.isNumeric(val)
+    if @isNumeric(val)
       val = val * 1
     else
       val = (val + "").trim()
