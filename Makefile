@@ -3,7 +3,8 @@ test:
 	./node_modules/.bin/mocha --reporter list
 	# rm -f ./test/temp.rrd
 
-test-int: test
+test-int:
+	@make test || true
 	./test/integration.sh
 
 .PHONY: test test-int

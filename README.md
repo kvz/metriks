@@ -144,6 +144,8 @@ You can echo any of these in your `plugin.sh` to hangle behavior of metriks, her
 
 Metriks is still in early stages of development, here's what needs to be done still:
 
+ - [ ] Coffee
+ - [ ] Base class with cli/log/applyConfig logic
  - [ ] Offer an API that so that you can programatically add values in Nodejs programs. e.g. `require('metriks').graph('df').addSeries([{'/': '50%'}])`
  - [ ] Offer *some* way to pipe data into it. I think STDIN vs using webserver as a dependency for that to accomodate decentralized / local preference
    - Should already create a graph without the need to define a plugin or run a daemon

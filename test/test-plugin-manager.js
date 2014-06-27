@@ -1,3 +1,4 @@
+var coffee  = require('coffee-script/register');
 var assert        = require('assert');
 var cli           = require('cli');
 var os            = require('os');

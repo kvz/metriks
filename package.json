@@ -18,7 +18,9 @@
     "lru-cache": "2.5.0",
     "sigmund": "1.0.0",
     "connect": "2.13.0",
-    "knox": "0.8.9"
+    "knox": "0.8.9",
+    "coffee-script": "~1.7.1",
+    "coffeelint": "~1.5.2"
   },
   "devDependencies": {},
   "keywords": [
