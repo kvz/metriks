@@ -1,15 +1,16 @@
-exec               = require("child_process").exec
-RRDTool            = require("./rrdtool").RRDTool
-_                  = require "underscore"
-async              = require "async"
-fs                 = require "fs"
-glob               = require "glob"
-os                 = require "os"
-sys                = require "sys"
-util               = require "util"
-path               = require "path"
-mkdirp             = require "mkdirp"
-Base               = require("./base").Base
+exec    = require("child_process").exec
+RRDTool = require("./rrdtool").RRDTool
+_       = require "underscore"
+async   = require "async"
+fs      = require "fs"
+glob    = require "glob"
+os      = require "os"
+sys     = require "sys"
+util    = require "util"
+path    = require "path"
+mkdirp  = require "mkdirp"
+Base    = require("./base").Base
+Err     = require("./base").ErrorFmt
 _.templateSettings = interpolate: /\{(.+?)\}/g
 
 class RRD extends Base
@@ -89,7 +90,7 @@ class RRD extends Base
     # Merge passed config
     _.extend this, config
     @rrdtool = new RRDTool(cli: @cli)
-    @graph = {}
+    @graph   = {}
     _.extend @graph, @defaultGraph, config.graph
     @graphStore = {}
     _.extend @graphStore, @defaultGraphStore, config.graphStore
@@ -121,12 +122,18 @@ class RRD extends Base
     @lineStore = cleanLineStore
 
     # Smart options
-    @rrdFile = util.format("%s/%s-%s.rrd", @name, os.hostname(), @name)  unless @rrdFile
-    @rrdFile = @rrdDir + "/" + @rrdFile  if @rrdFile.substr(0, 1) isnt "/"
-    @pngFile = util.format("%s/%s-%s.png", @name, os.hostname(), @name)  unless @pngFile
-    @pngFile = @pngDir + "/" + @pngFile  if @pngFile.substr(0, 1) isnt "/"
-    throw new Error("Please set the rrdDir")  unless @rrdDir
-    throw new Error("Please set the pngDir")  unless @pngDir
+    unless @rrdFile
+      @rrdFile = @fmt("%s/%s-%s.rrd", @name, os.hostname(), @name)
+    if @rrdFile.substr(0, 1) isnt "/"
+      @rrdFile = @rrdDir + "/" + @rrdFile
+    unless @pngFile
+      @pngFile = @fmt("%s/%s-%s.png", @name, os.hostname(), @name)
+    if @pngFile.substr(0, 1) isnt "/"
+      @pngFile = @pngDir + "/" + @pngFile
+    unless @rrdDir
+      throw Err.new("Please set the rrdDir")
+    unless @pngDir
+      throw Err.new("Please set the pngDir")
 
   _mkdir: (cb) ->
     rrdDir = path.dirname(@rrdFile)
@@ -143,7 +150,7 @@ class RRD extends Base
       return
 
   _create: (series, info, cb) ->
-    values = []
+    values           = []
     rrdCreateOptions = []
     series.forEach (item, lineIndex) =>
       rrdCreateOptions.push _.template("DS:{ dsName }:{ dsType }:{ heartBeat }:{ min }:{ max }")(@getLineStore(item.dsName, lineIndex))
@@ -157,9 +164,13 @@ class RRD extends Base
     else
       datasourcesInRRD = _.keys(info.ds)
       series.forEach (item, seriesIndex) ->
-        cb new Error(util.format("Something generates datasource \"%s\", but rrd %s holds \"%s\" in this location (%s). All dsNames: %s", item.dsName, @rrdFile, datasourcesInRRD[item.dsName], seriesIndex, datasourcesInRRD.join(", ")))  if datasourcesInRRD[seriesIndex] isnt item.dsName
+        if datasourcesInRRD[seriesIndex] isnt item.dsName
+          return cb Err.new("Something generates datasource \"%s\", but rrd %s holds \"%s\" in this location (%s). All dsNames: %s", 
+            item.dsName, @rrdFile, datasourcesInRRD[item.dsName], seriesIndex, datasourcesInRRD.join(", "))
 
-      return cb(new Error(util.format("Something generates %s datasources, but rrd %s was created with %s. ", series.length, @rrdFile, datasourcesInRRD.length)))  if series.length isnt datasourcesInRRD.length
+      if series.length isnt datasourcesInRRD.length
+        return cb Err.new("Something generates %s datasources, but rrd %s was created with %s. ",
+          series.length, @rrdFile, datasourcesInRRD.length)
       return cb(null, values)
 
   _update: (values, cb) ->

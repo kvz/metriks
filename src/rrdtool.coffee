@@ -5,6 +5,7 @@ sys       = require "sys"
 fs        = require "fs"
 util      = require "util"
 Base      = require("./base").Base
+Err       = require("./base").ErrorFmt
 
 class RRDTool extends Base
   constructor: (config) ->
@@ -46,7 +47,9 @@ class RRDTool extends Base
       killSignal: "SIGTERM"
 
     exec fullCmd, opts, (err, stdout, stderr) ->
-      return cb(new Error(util.format("Error while executing %s. %s. stderr: %s", fullCmd, err, stderr)))  if err isnt null or stderr
+      if err isnt null or stderr
+        return cb Err.new("Error while executing %s. %s. stderr: %s",
+          fullCmd, err, stderr)
       cb null, stdout
 
 
@@ -105,7 +108,7 @@ class RRDTool extends Base
           info: info
           stdout: stdout
 
-        return cb(new Error(util.format("No ds found in info for %s", rrdFile)))
+        return cb Err.new("No ds found in info for %s", rrdFile)
       cb null, info
 
 

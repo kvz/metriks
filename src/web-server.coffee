@@ -2,15 +2,11 @@ _       = require "underscore"
 connect = require "connect"
 util    = require "util"
 Base    = require("./base").Base
+Err     = require("./base").ErrorFmt
 
 class WebServer extends Base
-  constructor: (config) ->
-    super config
-    @webPort = 8000
-    @pngDir  = ""
-
-    _.extend this, config
-    return
+  @webPort: 8000
+  @pngDir : ""
 
   start: ->
     server = connect()

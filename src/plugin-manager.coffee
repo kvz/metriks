@@ -1,47 +1,53 @@
-exec    = require("child_process").exec
-Plugin  = require("./plugin").Plugin
-_       = require "underscore"
-async   = require "async"
-fs      = require "fs"
-glob    = require "glob"
-os      = require "os"
-sys     = require "sys"
-util    = require "util"
-path    = require "path"
-mkdirp  = require "mkdirp"
-Base    = require("./base").Base
+exec   = require("child_process").exec
+Plugin = require("./plugin").Plugin
+_      = require "underscore"
+async  = require "async"
+fs     = require "fs"
+glob   = require "glob"
+os     = require "os"
+sys    = require "sys"
+util   = require "util"
+path   = require "path"
+mkdirp = require "mkdirp"
+Base   = require("./base").Base
+Err    = require("./base").ErrorFmt
 
 class PluginManager extends Base
-  constructor: (config) ->
-    super config
+  # mgr config
+  pluginDir  : null
+  concurrency: 2
 
+  # plugin config
+  autoWritePng: false
+  autoUploadS3: false
 
-    # mgr config
-    @pluginDir   = null
-    @concurrency = 2
+  # graph config
+  rrdDir: null
+  pngDir: null
 
-    # plugin config
-    @autoWritePng = false
-    @autoUploadS3 = false
+  # internals
+  _q      : {}
+  _timers : []
+  _plugins: {}
 
-    # graph config
-    @rrdDir = null
-    @pngDir = null
-
-    # internals
-    @_q = {}
-    @_timers = []
-    @_plugins = {}
-    _.extend this, config
-    throw new Error("Please set the pluginDir")  unless @pluginDir
+  _validate: (config) ->
+    if not config.pluginDir?
+      return "Please set the pluginDir"
+    return true
 
   find: (pattern, cb) ->
+    console.log
+      thi: this
+
     @_loadAll false, (err) =>
-      throw err  if err
+      if err
+        throw err
       for key of @_plugins
         plugin = @_plugins[key]
-        return cb(null, plugin)  if plugin.name is pattern
-        return cb(null, plugin)  if plugin.rrd.rrdFile is pattern
+        if plugin.name is pattern
+          return cb(null, plugin)
+        if plugin.rrd.rrdFile is pattern
+          return cb(null, plugin)
       cb null, null
 
   graph: (pattern) ->
@@ -53,7 +59,8 @@ class PluginManager extends Base
         @info("open %s", plugin.pngFile)
 
   _loop: (plugin, cb) =>
-    @info("Running plugin %s at interval %s to %s", plugin.name, plugin.interval, plugin.rrdFile)
+    @info "Running plugin %s at interval %s to %s",
+      plugin.name, plugin.interval, plugin.rrdFile
     plugin.run cb
 
     # Reschedule
@@ -68,10 +75,10 @@ class PluginManager extends Base
       _.each @_plugins, (plugin) =>
         # Loop plugin
         unless plugin.executable
-          @debug("Skipping plugin %s as it is not executable", plugin.name)
+          @debug "Skipping plugin %s as it is not executable", plugin.name
           return
         unless plugin.enabled
-          @debug("Skipping plugin %s as it is not enabled", plugin.name)
+          @debug "Skipping plugin %s as it is not enabled", plugin.name
           return
         @_q = async.queue((plugin, cb) =>
           # We need to pass on `self`
@@ -86,12 +93,13 @@ class PluginManager extends Base
     # Clear all timers
     for i of @_timers
       clearTimeout @_timers[i]
-    return
 
   _loadAll: (reset, cb) ->
     # Load plugin configuration from disk
-    return cb(null)  if _.keys(@_plugins).length and reset isnt true
-    return cb(new Error(util.format("Plugin directory %s does not exist", @pluginDir)))  unless fs.existsSync(@pluginDir)
+    if _.keys(@_plugins).length and reset isnt true
+      return cb(null)
+    unless fs.existsSync(@pluginDir)
+      return cb(Err.new("Plugin directory %s does not exist", @pluginDir))
     glob @pluginDir + "/*", {}, (err, files) =>
       return cb(err)  if err
       files.forEach (pluginFile) =>
@@ -104,8 +112,10 @@ class PluginManager extends Base
           cli         : @cli
         )
         plugin.reload (err) =>
-          return cb(err)  if err
+          if err
+            return cb(err)
           @_plugins[plugin.name] = plugin
-          cb null  if _.keys(@_plugins).length is files.length
+          if _.keys(@_plugins).length is files.length
+            cb null
 
 exports.PluginManager = PluginManager

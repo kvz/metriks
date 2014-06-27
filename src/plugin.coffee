@@ -11,78 +11,82 @@ util               = require "util"
 path               = require "path"
 knox               = require "knox"
 Base               = require("./base").Base
+Err                = require("./base").ErrorFmt
 _.templateSettings = interpolate: /\{(.+?)\}/g
 
 class Plugin extends Base
   constructor: (config) ->
     super config
     @defaultConfig =
-      interval: "60"
-      enabled: true
+      interval  : "60"
+      enabled   : true
       executable: true
 
     # mgr config
-    @pluginFile = null
+    @pluginFile   = null
     @autoWritePng = null
     @autoUploadS3 = null
 
     _.extend this, config
 
+  # Parse options from source's comments
   reload: (cb) ->
-
-    # Parse options from source's comments
     @info("Loading plugin %s. This also executes it with 'config' parameter so you can print dynamic config. ", @pluginFile)
     opts =
-      encoding: "utf8"
-      timeout: 10 * 1000
-      maxBuffer: 200 * 1024
+      encoding  : "utf8"
+      timeout   : 10 * 1000
+      maxBuffer : 200 * 1024
       killSignal: "SIGTERM"
-      cwd: path.dirname(@pluginFile)
-      env: process.ENV
+      cwd       : path.dirname(@pluginFile)
+      env       : process.ENV
 
     exec @pluginFile + " config", opts, (err, stdout, stderr) =>
-      return cb(new Error(util.format("Cannot execute plugin %s. If you want to disable please set '# config.enable: false'. %s %s %s", @pluginFile, stderr, err, stdout)))  if err
+      if err
+        return cb(Err.new("Cannot execute plugin %s. If you want to disable please set '# config.enable: false'. %s %s %s", 
+          @pluginFile, stderr, err, stdout))
 
       # Parse comment header
-      flat = {}
+      flat         = {}
       commentLines = stdout.match(/^#(.*)$/g)
       if commentLines and commentLines.length
         commentLines.forEach (line) ->
-          cfgKey = line.match(/^#\s*([^:]+)\s*/)[1]
-          cfgVal = line.match(/:\s*(.*)\s*$/)[1]
+          cfgKey       = line.match(/^#\s*([^:]+)\s*/)[1]
+          cfgVal       = line.match(/:\s*(.*)\s*$/)[1]
           flat[cfgKey] = cfgVal
 
       # Convert flat -> structure to recursive
       nested = unflatten(flat,
         delimiter: "->"
-        object: true
+        object   : true
       )
 
       # Apply defaults to said config
       _.extend this, @defaultConfig, nested.config
 
       # Fixed plugin options
-      @name = path.basename(@pluginFile, ".sh")
+      @name       = path.basename(@pluginFile, ".sh")
       @executable = !!(1 & parseInt((fs.statSync(@pluginFile).mode & parseInt("777", 8)).toString(8)[0]))
       if @enabled is "false"
         @enabled = false
       else
         @enabled = true
-      unless @timeout
 
+      unless @timeout
         # Set plugin timeout to be slightly lower than interval if possible
         @timeout = @interval - 10
-        @timeout = 50  if @timeout < 10
+        if @timeout < 10
+          @timeout  = 50
+
       @interval = @interval * 1
-      @rrd = new RRD(
-        rrdDir: @rrdDir
-        pngDir: @pngDir
-        cli: @cli
-        name: @name
-        graph: nested.graph
+      @rrd      = new RRD(
+        rrdDir    : @rrdDir
+        pngDir    : @pngDir
+        cli       : @cli
+        name      : @name
+        graph     : nested.graph
         graphStore: nested.graphStore
-        line: nested.line
-        lineStore: nested.lineStore
+        line      : nested.line
+        lineStore : nested.lineStore
       )
       cb null
 
@@ -108,7 +112,8 @@ class Plugin extends Base
           callback err
 
     async.waterfall tasks, (err) =>
-      return @error(util.format("failure %s.", err))  if err
+      if err
+        return @error("failure %s.", err)
       @info("%s task(s) for plugin %s complete", tasks.length, @name)
       cb null
 
@@ -116,7 +121,8 @@ class Plugin extends Base
     series = []
     cnt    = 0
     stdout.trim().split("\n").forEach (line) =>
-      return  if line.substr(0, 1) is "#"
+      if line.substr(0, 1) is "#"
+        return
       columns = line.trim().split(/\s+/)
       dsName  = undefined
       value   = undefined
@@ -139,7 +145,8 @@ class Plugin extends Base
     # If there is 1 row and no column name, name the line after the graph.
     # e.g.: 'uptime'
     if series.length is 1 and @rrd.rrdtool.isNumeric(series[0].dsName)
-      return cb(new Error(util.format("Plugin has no name when it was needed to label simplistic series")))  unless @name
+      unless @name
+        return cb Err.new("Plugin has no name when it was needed to label simplistic series")
       series[0].dsName = @rrd.rrdtool.toDatasourceName(@name)
 
     cb null, series
@@ -155,19 +162,18 @@ class Plugin extends Base
           killSignal: "SIGTERM"
           cwd       : path.dirname(@pluginFile)
           env       : process.env
-
         exec @pluginFile, opts, (err, stdout, stderr) =>
-          return callback(new Error(util.format("Cannot execute %s. %s", @pluginFile, stderr)))  if err
-          @error util.format("Saw stderr while running plugin: %s", stderr)  if stderr
+          if err
+            return callback(Err.new("Cannot execute %s. %s", @pluginFile, stderr))
+          if stderr
+            @error "Saw stderr while running plugin: %s", stderr
           callback err, stdout, stderr
-
-      ,(stdout, stderr, callback) =>
+      , (stdout, stderr, callback) =>
         # Convert output to series
         @parseSeries stdout, stderr, (err, series) ->
           return callback(err)  if err
           callback null, series
-
-      ,(series, callback) =>
+      , (series, callback) =>
         @rrd.update series, callback
     ], (err) ->
       cb err
@@ -180,7 +186,8 @@ class Plugin extends Base
 
     _.each config, (env, key) ->
       v = undefined
-      return cb(new Error(util.format("No ds found in info for %s", "Please set a %s environment var with the S3 %s ", env, key)))  unless v = process.env[env]
+      unless v = process.env[env]
+        return cb Err.new("Please set a %s environment var with the S3 %s ", env, key)
       config[key] = v
 
     client              = knox.createClient(config)
@@ -192,14 +199,16 @@ class Plugin extends Base
     _.each files, (dir, file) ->
       if fs.existsSync(file)
         needed++
-        pat = new RegExp("^" + dir)
-        dst = file.replace(pat, "")
+        pat     = new RegExp("^" + dir)
+        dst     = file.replace(pat, "")
         headers =
-          "x-amz-acl": "public-read"
+          "x-amz-acl"    : "public-read"
           "storage-class": "STANDARD"
 
         client.putFile file, dst, headers, (err, res) ->
-          return cb(new Error(util.format("Error while uploading %s. code: %s. %s", file, ((if res then res.statusCode else "")), err)))  if err or res.statusCode isnt 200
+          if err or res.statusCode isnt 200
+            return cb(Err.new("Error while uploading %s. code: %s. %s",
+              file, res?.statusCode, err))
           res.resume()
           cb null  if ++uploaded >= needed
 

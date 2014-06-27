@@ -1,5 +1,14 @@
-_       = require "underscore"
-util    = require "util"
+_    = require "underscore"
+util = require "util"
+
+class ErrorFmt
+  @new: (args...) ->
+    str     = util.format.apply this, args
+    e       = new Error(str)
+    e.stack = e.stack.replace /.*ErrorFmt.*/, ""
+    return e
+
+exports.ErrorFmt = ErrorFmt
 
 class Base
   cli:
@@ -15,11 +24,28 @@ class Base
       console.log "OK:    " + str
 
   constructor: (config) ->
-    # _exten
+    @set config
+
+  set: (config) ->
+    config = @_defaults config
+    config = @_normalize config
+    result = @_validate config
+    if result != true
+      throw ErrorFmt.new "%s validation error. %s", @constructor.name, result
+
+    _.extend this, config
+
+  _defaults: (config) ->
+    return config
+
+  _normalize: (config) ->
+    return config
+
+  _validate: (config) ->
+    return true
 
   fmt: (args...) ->
-    str = util.format.apply this, args
-    return str
+    return util.format.apply this, args
 
   info: (args...) ->
     @cli.info @fmt.apply(this, args)
