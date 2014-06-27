@@ -1,19 +1,22 @@
-exec   = require("child_process").exec
-Plugin = require("./plugin").Plugin
-_      = require "underscore"
-async  = require "async"
-fs     = require "fs"
-glob   = require "glob"
-os     = require "os"
-sys    = require "sys"
-util   = require "util"
-path   = require "path"
-mkdirp = require "mkdirp"
-Base   = require("./base").Base
+exec    = require("child_process").exec
+Plugin  = require("./plugin").Plugin
+_       = require "underscore"
+async   = require "async"
+fs      = require "fs"
+glob    = require "glob"
+os      = require "os"
+sys     = require "sys"
+util    = require "util"
+path    = require "path"
+mkdirp  = require "mkdirp"
+Base    = require("./base").Base
+Logging = require("./logging")
 
 class PluginManager extends Base
   constructor: (config) ->
     super config
+
+    @info "WATF"
 
     # mgr config
     @pluginDir   = null
@@ -81,34 +84,26 @@ class PluginManager extends Base
 
         @_q.push plugin
 
-
-  ###
-  Clear all timers
-  ###
   stop: ->
+    # Clear all timers
     for i of @_timers
       clearTimeout @_timers[i]
     return
 
-
-  ###
-  Load plugin configuration from disk
-  @param  {Function} cb
-  @return {[type]}
-  ###
   _loadAll: (reset, cb) ->
+    # Load plugin configuration from disk
     return cb(null)  if _.keys(@_plugins).length and reset isnt true
     return cb(new Error(util.format("Plugin directory %s does not exist", @pluginDir)))  unless fs.existsSync(@pluginDir)
     glob @pluginDir + "/*", {}, (err, files) =>
       return cb(err)  if err
       files.forEach (pluginFile) =>
         plugin = new Plugin(
-          pluginFile: pluginFile
-          rrdDir: @rrdDir
-          pngDir: @pngDir
+          pluginFile  : pluginFile
+          rrdDir      : @rrdDir
+          pngDir      : @pngDir
           autoWritePng: @autoWritePng
           autoUploadS3: @autoUploadS3
-          cli: @cli
+          cli         : @cli
         )
         plugin.reload (err) =>
           return cb(err)  if err

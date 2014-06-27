@@ -1,3 +1,4 @@
+var coffee = require('coffee-script/register');
 exports         = module.exports = Metriks;
 exports.Metriks = Metriks;
 
@@ -10,11 +11,10 @@ var PluginManager = require('./src/plugin-manager').PluginManager;
 var WebServer     = require('./src/web-server').WebServer;
 
 
-Metriks.prototype.start = function() {
-};
+// Metriks.prototype.start = function() {
+// };
 
 Metriks.prototype.start = function() {
-  
   if (this.config.graph) {
     this.pluginManager.graph(program.graph);
   } else {

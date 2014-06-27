@@ -34,16 +34,15 @@ class RRDTool extends Base
             args.push "--" + subKey.replace(/([A-Z])/g, "-$1").toLowerCase()
           return  if subVal is true or subVal is "true"
           args.push subVal + ""
-
         return
       args.push val + ""
 
     fullCmd = "rrdtool " + @escape(args)
     @cli.debug fullCmd
     opts =
-      encoding: "utf8"
-      timeout: 50 * 1000
-      maxBuffer: 200 * 1024
+      encoding  : "utf8"
+      timeout   : 50 * 1000
+      maxBuffer : 200 * 1024
       killSignal: "SIGTERM"
 
     exec fullCmd, opts, (err, stdout, stderr) ->
@@ -51,14 +50,9 @@ class RRDTool extends Base
       cb null, stdout
 
 
-  ###
-  Different from _.defaults because this goes over the option
-  Array to apply missing Object properties
-  @param  {[type]} options     [description]
-  @param  {[type]} defaultOpts [description]
-  @return {[type]}             [description]
-  ###
   _default: (options, defaultOpts) ->
+    # Different from _.defaults because this goes over the option
+    # Array to apply missing Object properties
     defaultKeys = _.keys(defaultOpts)
     hasKeys = []
     _.each defaultOpts, (defaultVal, defaultKey) ->
@@ -135,12 +129,9 @@ class RRDTool extends Base
     val
 
 
-  ###
-  isNumeric is something else than isNumber. We also allow strings posing as numbers.
-  @param  {[type]}  n [description]
-  @return {Boolean}   [description]
-  ###
   isNumeric: (n) ->
+    # isNumeric is something else than isNumber.
+    # We also allow strings posing as numbers.
     not isNaN(parseFloat(n)) and isFinite(n)
 
   rrdTime: (date) ->
