@@ -10,21 +10,21 @@ class RRDTool
     @cli =
       info: (str) ->
         console.log "INFO:  " + str
-        
+
       debug: (str) ->
         console.log "DEBUG: " + str
-        
+
       error: (str) ->
         console.log "ERROR: " + str
-        
+
       fatal: (str) ->
         console.log "FATAL: " + str
-        
+
       ok: (str) ->
         console.log "OK:    " + str
-        
+
     _.extend this, config
-    
+
   escape: (args) ->
 
     # Escape everything that is potentially unsafe with a backslash
@@ -50,10 +50,9 @@ class RRDTool
             args.push "--" + subKey.replace(/([A-Z])/g, "-$1").toLowerCase()
           return  if subVal is true or subVal is "true"
           args.push subVal + ""
-          
+
         return
       args.push val + ""
-      return
 
     fullCmd = "rrdtool " + self.escape(args)
     self.cli.debug fullCmd
@@ -66,8 +65,6 @@ class RRDTool
     exec fullCmd, opts, (err, stdout, stderr) ->
       return cb(new Error(util.format("Error while executing %s. %s. stderr: %s", fullCmd, err, stderr)))  if err isnt null or stderr
       cb null, stdout
-
-    return
 
 
   ###
@@ -102,7 +99,6 @@ class RRDTool
       step : 300
     )
     self.exe "create", options, cb
-    return
 
   update: (rrdFile, time, values, options, cb) ->
     self = this
@@ -110,14 +106,12 @@ class RRDTool
     options.unshift rrdFile
     options.push self.rrdTime(time) + ":" + values.join(":")
     self.exe "update", options, cb
-    return
 
   graph: (pngFile, options, cb) ->
     self = this
     options = options or []
     options.unshift pngFile
     self.exe "graph", options, cb
-    return
 
   info: (rrdFile, options, cb) ->
     self = this
@@ -140,7 +134,6 @@ class RRDTool
         return cb(new Error(util.format("No ds found in info for %s", rrdFile)))
       cb null, info
 
-    return
 
   explodeTree: (buf) ->
     self = this
@@ -151,7 +144,6 @@ class RRDTool
       rawVal = parts.join(" = ")
       key = rawKey.replace(/[\.\[\]]+/g, ".").replace(/^\[/, "").replace(/\]$/, "")
       flat[key] = self.toVal(rawVal)
-      return
 
     unflatten flat
 
@@ -182,14 +174,12 @@ class RRDTool
     str
 
   toDSTitle: (str) ->
-
     # An rrd ds name can only be 19 chars long
     str = (str + "").replace(/[^a-zA-Z0-9_ ]/g, "")
     str = (str).replace(/\s+/g, " ")
     str.substr 0, 19
 
   toDatasourceName: (str) ->
-
     # An rrd ds name can only be 19 chars long
     str = (str + "").replace(/[^a-zA-Z0-9_]/g, "_")
     str.substr 0, 19

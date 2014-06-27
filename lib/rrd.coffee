@@ -14,16 +14,16 @@ _.templateSettings = interpolate: /\{(.+?)\}/g
 class RRD
   constructor: (config) ->
     @theme =
-      BACK: "#1D1D1DFF"
+      BACK  : "#1D1D1DFF"
       CANVAS: "#141414FF"
       SHADEA: "#282A2AFF"
       SHADEB: "#121212FF"
-      GRID: "#232323FF"
-      MGRID: "#232323EE"
-      FRAME: "#2A1F1CFF"
-      FONT: "#FFFFFFEE"
-      AXIS: "#4A4A4AFF"
-      LINES: [
+      GRID  : "#232323FF"
+      MGRID : "#232323EE"
+      FRAME : "#2A1F1CFF"
+      FONT  : "#FFFFFFEE"
+      AXIS  : "#4A4A4AFF"
+      LINES : [
         "#44B824FF"
         "#E992ECFF"
         "#FF0051FF"
@@ -47,42 +47,42 @@ class RRD
 
     @defaultGraphStore =
       consolidation: "AVERAGE"
-      xff: 0.5
-      step: 1
-      rows: 300
+      xff          : 0.5
+      step         : 1
+      rows         : 300
 
     @defaultGraph =
-      width: 1000
-      height: 600
-      watermark: "kvz.io"
-      font: "DEFAULT:10:Inconsolata"
-      tabwidth: 20
-      border: 2
-      zoom: 1
-      fullSizeMode: true
+      width        : 1000
+      height       : 600
+      watermark    : "kvz.io"
+      font         : "DEFAULT:10:Inconsolata"
+      tabwidth     : 20
+      border       : 2
+      zoom         : 1
+      fullSizeMode : true
       dynamicLabels: true
-      slopeMode: true
-      end: "now"
-      start: "end-120000s"
+      slopeMode    : true
+      end          : "now"
+      start        : "end-120000s"
       verticalLabel: ""
 
     @defaultLineStore =
-      dsType: "GAUGE"
+      dsType       : "GAUGE"
       consolidation: "AVERAGE"
-      heartBeat: 600
-      min: "U"
-      max: "U"
+      heartBeat    : 600
+      min          : "U"
+      max          : "U"
 
     @defaultLine = element: "LINE1"
-    @name = ""
-    @graph = {}
-    @graphStore = {}
-    @line = {}
-    @lineStore = {}
-    @rrdDir = null
-    @pngDir = null
-    @rrdFile = null
-    @pngFile = null
+    @name        = ""
+    @graph       = {}
+    @graphStore  = {}
+    @line        = {}
+    @lineStore   = {}
+    @rrdDir      = null
+    @pngDir      = null
+    @rrdFile     = null
+    @pngFile     = null
 
     # mgr config
     @cli =
@@ -126,22 +126,18 @@ class RRD
     # Save line properties under dsName compatible names
     cleanLine = {}
     _.each config.line, (lineProperties, dsName) ->
-
       # Merging defaults can only be done at runtime
       cleanDsName = (dsName + "").replace(/[^a-zA-Z0-9_]/g, "_").substr(0, 19)
       cleanLine[cleanDsName] = lineProperties
-      return
 
     @line = cleanLine
 
     # Save lineStore properties under dsName compatible names
     cleanLineStore = {}
     _.each config.lineStore, (lineProperties, dsName) ->
-
       # Merging defaults can only be done at runtime
       cleanDsName = (dsName + "").replace(/[^a-zA-Z0-9_]/g, "_").substr(0, 19)
       cleanLineStore[cleanDsName] = lineProperties
-      return
 
     @lineStore = cleanLineStore
 
@@ -152,13 +148,11 @@ class RRD
     @pngFile = @pngDir + "/" + @pngFile  if @pngFile.substr(0, 1) isnt "/"
     throw new Error("Please set the rrdDir")  unless @rrdDir
     throw new Error("Please set the pngDir")  unless @pngDir
-    return
 
   update: (series, cb) ->
     self = this
     async.waterfall [
       (callback) ->
-
         # Mkdir
         rrdDir = path.dirname(self.rrdFile)
         return callback(null)  if fs.existsSync(rrdDir)
@@ -167,31 +161,26 @@ class RRD
           return callback(err)  if err
           callback null
 
-      (callback) ->
-
+      ,(callback) ->
         # Find info
         self.rrdtool.info self.rrdFile, [], (err, info) ->
           return callback(err)  if err
           callback null, info
           return
 
-      (info, callback) ->
-
+      ,(info, callback) ->
         # Create rrds if needed
         values = []
         rrdCreateOptions = []
         series.forEach (item, lineIndex) ->
           rrdCreateOptions.push _.template("DS:{ dsName }:{ dsType }:{ heartBeat }:{ min }:{ max }")(self.getLineStore(item.dsName, lineIndex))
           values.push item.value
-          return
 
         rrdCreateOptions.push _.template("RRA:{ consolidation }:{ xff }:{ step }:{ rows }")(self.graphStore)
         if info is null
-
           # Info is null if the rrd didn't exist yet
           self.rrdtool.create self.rrdFile, rrdCreateOptions, (err, output) ->
             callback err, values
-
         else
           datasourcesInRRD = _.keys(info.ds)
           series.forEach (item, seriesIndex) ->
@@ -199,8 +188,7 @@ class RRD
 
           return callback(new Error(util.format("Something generates %s datasources, but rrd %s was created with %s. ", series.length, self.rrdFile, datasourcesInRRD.length)))  if series.length isnt datasourcesInRRD.length
           return callback(null, values)
-      (values, callback) ->
-
+      ,(values, callback) ->
         # Update rrd with series
         self.rrdtool.update self.rrdFile, new Date(), values, [], (err, output) ->
           callback null
@@ -208,13 +196,10 @@ class RRD
 
     ], (err) ->
       cb err
-      return
-
-    return
 
   getLineStore: (dsName, lineIndex) ->
-    self = this
-    dsName = self.rrdtool.toDatasourceName(dsName)
+    self      = this
+    dsName    = self.rrdtool.toDatasourceName(dsName)
     lineStore = {}
     _.extend lineStore, self.defaultLineStore,
       vName: dsName + "a"
@@ -225,9 +210,9 @@ class RRD
     lineStore
 
   getLine: (dsName, lineIndex) ->
-    self = this
+    self   = this
     dsName = self.rrdtool.toDatasourceName(dsName)
-    line = {}
+    line   = {}
     _.extend line, self.defaultLine,
       vName: dsName + "a"
       title: dsName
@@ -239,7 +224,6 @@ class RRD
     self = this
     async.waterfall [
       (callback) ->
-
         # Mkdir
         pngDir = path.dirname(self.pngFile)
         return callback(null)  if fs.existsSync(pngDir)
@@ -248,7 +232,7 @@ class RRD
           return callback(err)  if err
           callback null
 
-      (callback) ->
+      , (callback) ->
         self.rrdtool.info self.rrdFile, [], (err, info) ->
           return callback(err)  if err
 
@@ -261,28 +245,21 @@ class RRD
             if _.isString(themeColor)
               rrdGraphOptions.push "--color"
               rrdGraphOptions.push themeKey + themeColor
-            return
-
 
           # Loop over each ds, merge params and push to rrdGraphOptions array
           _.keys(info.ds).forEach (dsName, lineIndex) ->
             rrdGraphOptions.push _.template("DEF:{ vName }={ rrdFile }:{ dsName }:{ consolidation }")(self.getLineStore(dsName, lineIndex))
             rrdGraphOptions.push _.template("{ element }:{ vName }{ color }:{ title }\\\\l")(self.getLine(dsName, lineIndex))
-            return
 
           callback null, rrdGraphOptions
           return
 
-      (rrdGraphOptions, callback) ->
+      , (rrdGraphOptions, callback) ->
         self.rrdtool.graph self.pngFile, rrdGraphOptions, (err, output) ->
           return callback(err)  if err
           callback null
-          return
 
     ], (err) ->
       cb err
-      return
-
-    return
 
 exports.RRD = RRD

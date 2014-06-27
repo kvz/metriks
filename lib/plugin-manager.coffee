@@ -17,23 +17,18 @@ class PluginManager
     @cli =
       info: (str) ->
         console.log "INFO:  " + str
-        return
 
       debug: (str) ->
         console.log "DEBUG: " + str
-        return
 
       error: (str) ->
         console.log "ERROR: " + str
-        return
 
       fatal: (str) ->
         console.log "FATAL: " + str
-        return
 
       ok: (str) ->
         console.log "OK:    " + str
-        return
 
     @pluginDir = null
     @concurrency = 2
@@ -52,7 +47,6 @@ class PluginManager
     @_plugins = {}
     _.extend this, config
     throw new Error("Please set the pluginDir")  unless @pluginDir
-    return
 
   find: (pattern, cb) ->
     self = this
@@ -64,7 +58,6 @@ class PluginManager
         return cb(null, plugin)  if plugin.rrd.rrdFile is pattern
       cb null, null
 
-    return
 
   graph: (pattern) ->
     self = this
@@ -74,11 +67,8 @@ class PluginManager
       self._writePNG plugin, (err) ->
         throw err  if err
         self.cli.info util.format("open %s", plugin.pngFile)
-        return
 
-      return
 
-    return
 
   _loop: (self, plugin, cb) ->
     self.cli.info util.format("Running plugin %s at interval %s to %s", plugin.name, plugin.interval, plugin.rrdFile)
@@ -87,16 +77,14 @@ class PluginManager
     # Reschedule
     self._timers.push setTimeout(->
       self._q.push plugin
-      return
-    , plugin.interval * 1000)
-    return
+          , plugin.interval * 1000)
 
   start: ->
     self = this
     self._loadAll false, (err) ->
-      throw err  if err
+      if err
+        throw err
       _.each self._plugins, (plugin) ->
-
         # Loop plugin
         unless plugin.executable
           self.cli.debug util.format("Skipping plugin %s as it is not executable", plugin.name)
@@ -105,21 +93,13 @@ class PluginManager
           self.cli.debug util.format("Skipping plugin %s as it is not enabled", plugin.name)
           return
         self._q = async.queue((plugin, cb) ->
-
           # We need to pass on `self`
           self._loop self, plugin, cb
-          return
         , self.concurrency)
         self._q.drain = ->
           self.cli.debug util.format("waiting for new items to be pushed to queue")
-          return
 
         self._q.push plugin
-        return
-
-      return
-
-    return
 
 
   ###
@@ -155,13 +135,5 @@ class PluginManager
           return cb(err)  if err
           self._plugins[plugin.name] = plugin
           cb null  if _.keys(self._plugins).length is files.length
-          return
-
-        return
-
-      return
-
-    return
-
 
 exports.PluginManager = PluginManager

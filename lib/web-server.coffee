@@ -39,8 +39,5 @@ class WebServer
     server.use connect.directory(self.pngDir, {})
     server.listen self.webPort, ->
       self.cli.info util.format("Serving %s on port %s", self.pngDir, self.webPort)
-      return
-
-    return
 
 exports.WebServer = WebServer

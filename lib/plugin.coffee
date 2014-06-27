@@ -26,26 +26,20 @@ class Plugin
     @cli =
       info: (str) ->
         console.log "INFO:  " + str
-        return
 
       debug: (str) ->
         console.log "DEBUG: " + str
-        return
 
       error: (str) ->
         console.log "ERROR: " + str
-        return
 
       fatal: (str) ->
         console.log "FATAL: " + str
-        return
 
       ok: (str) ->
         console.log "OK:    " + str
-        return
 
     _.extend this, config
-    return
 
   reload: (cb) ->
     self = this
@@ -71,8 +65,6 @@ class Plugin
           cfgKey = line.match(/^#\s*([^:]+)\s*/)[1]
           cfgVal = line.match(/:\s*(.*)\s*$/)[1]
           flat[cfgKey] = cfgVal
-          return
-
 
       # Convert flat -> structure to recursive
       nested = unflatten(flat,
@@ -107,10 +99,6 @@ class Plugin
         lineStore: nested.lineStore
       )
       cb null
-      return
-
-    return
-
 
   ###
   Loop a single plugin based on options.interval
@@ -124,38 +112,23 @@ class Plugin
     tasks.push (callback) ->
       self._execute (err) ->
         callback err
-        return
-
-      return
-
 
     # Optionally write pngs
     if self.autoWritePng
       tasks.push (callback) ->
         self.rrd.grapher (err) ->
           callback err
-          return
-
-        return
-
 
     # Optionally upload to s3
     if self.autoUploadS3
       tasks.push (callback) ->
         self._uploadS3 (err) ->
           callback err
-          return
-
-        return
 
     async.waterfall tasks, (err) ->
       return self.cli.error(util.format("failure %s.", err))  if err
       self.cli.info util.format("%s task(s) for plugin %s complete", tasks.length, self.name)
       cb null
-      return
-
-    return
-
 
   ###
   Parse plugin output
@@ -174,12 +147,10 @@ class Plugin
       value = undefined
       cnt++
       if columns.length > 1
-
         # Name the line by first column
         dsName = columns.shift()
         value = columns.join(" ")
       else
-
         # Name the line by row-index
         dsName = cnt
         value = columns.join(" ")
@@ -189,26 +160,19 @@ class Plugin
         value: self.rrd.rrdtool.toVal(value)
         dsName: self.rrd.rrdtool.toDatasourceName(dsName)
 
-      return
-
 
     # If there is 1 row and no column name, name the line after the graph.
     # e.g.: 'uptime'
     if series.length is 1 and self.rrd.rrdtool.isNumeric(series[0].dsName)
       return cb(new Error(util.format("Plugin has no name when it was needed to label simplistic series")))  unless self.name
       series[0].dsName = self.rrd.rrdtool.toDatasourceName(self.name)
-    else
 
-
-    # console.log(series);
     cb null, series
-    return
 
   _execute: (cb) ->
     self = this
     async.waterfall [
       (callback) ->
-
         # Execute plugin
         opts =
           encoding: "utf8"
@@ -222,23 +186,17 @@ class Plugin
           return callback(new Error(util.format("Cannot execute %s. %s", self.pluginFile, stderr)))  if err
           self.cli.error util.format("Saw stderr while running plugin: %s", stderr)  if stderr
           callback err, stdout, stderr
-          return
 
-      (stdout, stderr, callback) ->
-
+      ,(stdout, stderr, callback) ->
         # Convert output to series
         self.parseSeries stdout, stderr, (err, series) ->
           return callback(err)  if err
           callback null, series
-          return
 
-      (series, callback) ->
+      ,(series, callback) ->
         self.rrd.update series, callback
     ], (err) ->
       cb err
-      return
-
-    return
 
   _uploadS3: (cb) ->
     self = this
@@ -251,7 +209,6 @@ class Plugin
       v = undefined
       return cb(new Error(util.format("No ds found in info for %s", "Please set a %s environment var with the S3 %s ", env, key)))  unless v = process.env[env]
       config[key] = v
-      return
 
     client = knox.createClient(config)
     files = {}
@@ -272,9 +229,5 @@ class Plugin
           return cb(new Error(util.format("Error while uploading %s. code: %s. %s", file, ((if res then res.statusCode else "")), err)))  if err or res.statusCode isnt 200
           res.resume()
           cb null  if ++uploaded >= needed
-
-      return
-
-    return
 
 exports.Plugin = Plugin
