@@ -15,23 +15,17 @@ Err                = require("./base").ErrorFmt
 _.templateSettings = interpolate: /\{(.+?)\}/g
 
 class Plugin extends Base
-  constructor: (config) ->
-    super config
-    @defaultConfig =
-      interval  : "60"
-      enabled   : true
-      executable: true
-
-    # mgr config
-    @pluginFile   = null
-    @autoWritePng = null
-    @autoUploadS3 = null
-
-    _.extend this, config
+  interval    : "60"
+  enabled     : true
+  executable  : true
+  pluginFile  : null
+  autoWritePng: null
+  autoUploadS3: null
 
   # Parse options from source's comments
   reload: (cb) ->
-    @info("Loading plugin %s. This also executes it with 'config' parameter so you can print dynamic config. ", @pluginFile)
+    @info "Loading plugin %s. This also executes it with 'config' parameter so you can print dynamic config. ",
+      @pluginFile
     opts =
       encoding  : "utf8"
       timeout   : 10 * 1000
@@ -42,53 +36,57 @@ class Plugin extends Base
 
     exec @pluginFile + " config", opts, (err, stdout, stderr) =>
       if err
-        return cb(Err.new("Cannot execute plugin %s. If you want to disable please set '# config.enable: false'. %s %s %s", 
-          @pluginFile, stderr, err, stdout))
+        return cb Err.new("Cannot execute plugin %s. If you want to disable please set '# config.enable: false'. %s %s %s",
+          @pluginFile, stderr, err, stdout)
 
-      # Parse comment header
-      flat         = {}
-      commentLines = stdout.match(/^#(.*)$/g)
-      if commentLines and commentLines.length
-        commentLines.forEach (line) ->
-          cfgKey       = line.match(/^#\s*([^:]+)\s*/)[1]
-          cfgVal       = line.match(/:\s*(.*)\s*$/)[1]
-          flat[cfgKey] = cfgVal
-
-      # Convert flat -> structure to recursive
-      nested = unflatten(flat,
-        delimiter: "->"
-        object   : true
-      )
-
-      # Apply defaults to said config
-      _.extend this, @defaultConfig, nested.config
-
-      # Fixed plugin options
-      @name       = path.basename(@pluginFile, ".sh")
-      @executable = !!(1 & parseInt((fs.statSync(@pluginFile).mode & parseInt("777", 8)).toString(8)[0]))
-      if @enabled is "false"
-        @enabled = false
-      else
-        @enabled = true
-
-      unless @timeout
-        # Set plugin timeout to be slightly lower than interval if possible
-        @timeout = @interval - 10
-        if @timeout < 10
-          @timeout  = 50
-
-      @interval = @interval * 1
-      @rrd      = new RRD(
-        rrdDir    : @rrdDir
-        pngDir    : @pngDir
-        cli       : @cli
-        name      : @name
-        graph     : nested.graph
-        graphStore: nested.graphStore
-        line      : nested.line
-        lineStore : nested.lineStore
-      )
+      config = @_strToConfig stdout
+      @set config
       cb null
+
+  _strToConfig: (str) ->
+    # Parse comment header
+    flat         = {}
+    commentLines = str.match(/^#(.*)$/g)
+    if commentLines and commentLines.length
+      commentLines.forEach (line) ->
+        cfgKey       = line.match(/^#\s*([^:]+)\s*/)[1]
+        cfgVal       = line.match(/:\s*(.*)\s*$/)[1]
+        flat[cfgKey] = cfgVal
+
+    # Convert flat -> structure to recursive
+    nested = unflatten flat,
+      delimiter: "->"
+      object   : true
+
+    return nested
+
+  _setup: (config) ->
+    super config
+    # Fixed plugin options
+    @name       = path.basename(@pluginFile, ".sh")
+    @executable = !!(1 & parseInt((fs.statSync(@pluginFile).mode & parseInt("777", 8)).toString(8)[0]))
+    if @enabled is "false"
+      @enabled = false
+    else
+      @enabled = true
+
+    if not @timeout
+      # Set plugin timeout to be slightly lower than interval if possible
+      @timeout = @interval - 10
+      if @timeout < 10
+        @timeout  = 50
+
+    @interval = @interval * 1
+    @rrd      = new RRD(
+      rrdDir    : @rrdDir
+      pngDir    : @pngDir
+      cli       : @cli
+      name      : @name
+      graph     : config.graph
+      graphStore: config.graphStore
+      line      : config.line
+      lineStore : config.lineStore
+    )
 
   # Loop a single plugin based on options.interval
   run: (cb) ->

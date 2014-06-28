@@ -14,81 +14,79 @@ Err     = require("./base").ErrorFmt
 _.templateSettings = interpolate: /\{(.+?)\}/g
 
 class RRD extends Base
-  constructor: (config) ->
+  theme:
+    BACK  : "#1D1D1DFF"
+    CANVAS: "#141414FF"
+    SHADEA: "#282A2AFF"
+    SHADEB: "#121212FF"
+    GRID  : "#232323FF"
+    MGRID : "#232323EE"
+    FRAME : "#2A1F1CFF"
+    FONT  : "#FFFFFFEE"
+    AXIS  : "#4A4A4AFF"
+    LINES : [
+      "#44B824FF"
+      "#E992ECFF"
+      "#FF0051FF"
+      "#9AEBEAFF"
+      "#D73A3FFF"
+      "#44B824FF"
+      "#6384B3FF"
+      "#2F4D5DFF"
+      "#E1E3EAFF"
+      "#7F9B8BFF"
+      "#FDFFA8FF"
+      "#C7D5AEFF"
+      "#8E7F57FF"
+      "#FBFFF2FF"
+      "#CF492CFF"
+      "#9863B6FF"
+      "#EF8E1CFF"
+      "#45B175FF"
+      "#3A96D0FF"
+    ]
+
+  defaultGraphStore:
+    consolidation: "AVERAGE"
+    xff          : 0.5
+    step         : 1
+    rows         : 300
+
+  defaultGraph:
+    width        : 1000
+    height       : 600
+    watermark    : "kvz.io"
+    font         : "DEFAULT:10:Inconsolata"
+    tabwidth     : 20
+    border       : 2
+    zoom         : 1
+    fullSizeMode : true
+    dynamicLabels: true
+    slopeMode    : true
+    end          : "now"
+    start        : "end-120000s"
+    verticalLabel: ""
+
+  defaultLineStore:
+    dsType       : "GAUGE"
+    consolidation: "AVERAGE"
+    heartBeat    : 600
+    min          : "U"
+    max          : "U"
+
+  defaultLine: element: "LINE1"
+  name       : ""
+  graph      : {}
+  graphStore : {}
+  line       : {}
+  lineStore  : {}
+  rrdDir     : null
+  pngDir     : null
+  rrdFile    : null
+  pngFile    : null
+
+  _setup: (config) ->
     super config
-    @theme =
-      BACK  : "#1D1D1DFF"
-      CANVAS: "#141414FF"
-      SHADEA: "#282A2AFF"
-      SHADEB: "#121212FF"
-      GRID  : "#232323FF"
-      MGRID : "#232323EE"
-      FRAME : "#2A1F1CFF"
-      FONT  : "#FFFFFFEE"
-      AXIS  : "#4A4A4AFF"
-      LINES : [
-        "#44B824FF"
-        "#E992ECFF"
-        "#FF0051FF"
-        "#9AEBEAFF"
-        "#D73A3FFF"
-        "#44B824FF"
-        "#6384B3FF"
-        "#2F4D5DFF"
-        "#E1E3EAFF"
-        "#7F9B8BFF"
-        "#FDFFA8FF"
-        "#C7D5AEFF"
-        "#8E7F57FF"
-        "#FBFFF2FF"
-        "#CF492CFF"
-        "#9863B6FF"
-        "#EF8E1CFF"
-        "#45B175FF"
-        "#3A96D0FF"
-      ]
-
-    @defaultGraphStore =
-      consolidation: "AVERAGE"
-      xff          : 0.5
-      step         : 1
-      rows         : 300
-
-    @defaultGraph =
-      width        : 1000
-      height       : 600
-      watermark    : "kvz.io"
-      font         : "DEFAULT:10:Inconsolata"
-      tabwidth     : 20
-      border       : 2
-      zoom         : 1
-      fullSizeMode : true
-      dynamicLabels: true
-      slopeMode    : true
-      end          : "now"
-      start        : "end-120000s"
-      verticalLabel: ""
-
-    @defaultLineStore =
-      dsType       : "GAUGE"
-      consolidation: "AVERAGE"
-      heartBeat    : 600
-      min          : "U"
-      max          : "U"
-
-    @defaultLine = element: "LINE1"
-    @name        = ""
-    @graph       = {}
-    @graphStore  = {}
-    @line        = {}
-    @lineStore   = {}
-    @rrdDir      = null
-    @pngDir      = null
-    @rrdFile     = null
-    @pngFile     = null
-
-    # Merge passed config
-    _.extend this, config
     @rrdtool = new RRDTool(cli: @cli)
     @graph   = {}
     _.extend @graph, @defaultGraph, config.graph
@@ -122,30 +120,36 @@ class RRD extends Base
     @lineStore = cleanLineStore
 
     # Smart options
-    unless @rrdFile
+    if not @rrdFile
       @rrdFile = @fmt("%s/%s-%s.rrd", @name, os.hostname(), @name)
     if @rrdFile.substr(0, 1) isnt "/"
       @rrdFile = @rrdDir + "/" + @rrdFile
-    unless @pngFile
+    if not @pngFile
       @pngFile = @fmt("%s/%s-%s.png", @name, os.hostname(), @name)
     if @pngFile.substr(0, 1) isnt "/"
       @pngFile = @pngDir + "/" + @pngFile
-    unless @rrdDir
-      throw Err.new("Please set the rrdDir")
-    unless @pngDir
-      throw Err.new("Please set the pngDir")
+
+  _validate: (config) ->
+    if not config.rrdDir
+      return "Please set the rrdDir"
+    if not config.pngDir
+      return "Please set the pngDir"
+    return true
 
   _mkdir: (cb) ->
     rrdDir = path.dirname(@rrdFile)
-    return cb(null)  if fs.existsSync(rrdDir)
+    if fs.existsSync(rrdDir)
+      return cb(null)
     @info("Creating directory %s", rrdDir)
     mkdirp rrdDir, (err) ->
-      return cb(err)  if err
+      if err
+        return cb(err)
       cb null
 
   _findInfo: (cb) ->
     @rrdtool.info @rrdFile, [], (err, info) ->
-      return cb(err)  if err
+      if err
+        return cb(err)
       cb null, info
       return
 

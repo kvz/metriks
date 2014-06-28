@@ -32,8 +32,7 @@ class Base
     result = @_validate config
     if result != true
       throw ErrorFmt.new "%s validation error. %s", @constructor.name, result
-
-    _.extend this, config
+    @_setup config
 
   _defaults: (config) ->
     return config
@@ -43,6 +42,9 @@ class Base
 
   _validate: (config) ->
     return true
+
+  _setup: (config) ->
+    _.extend this, config
 
   fmt: (args...) ->
     return util.format.apply this, args

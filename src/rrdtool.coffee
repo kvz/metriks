@@ -8,17 +8,15 @@ Base      = require("./base").Base
 Err       = require("./base").ErrorFmt
 
 class RRDTool extends Base
-  constructor: (config) ->
-    super config
-    _.extend this, config
-
   escape: (args) ->
     # Escape everything that is potentially unsafe with a backslash
     # return (argument+'').trim().replace(/([^0-9a-zA-Z-])/g, '\\$1');
     # rrdtool requires different escaping
     Array::slice.call(args).map((argument) ->
-      argument = ""  if !argument?
-      return "''"  if argument is ""
+      if !argument?
+        argument = ""
+      if argument is ""
+        return "''"
       (argument + "").trim().replace /([^0-9a-zA-Z-\\\"\_\.\/\:])/g, "\\$1"
     ).join " "
 
@@ -28,12 +26,15 @@ class RRDTool extends Base
     options.forEach (val, key) ->
       if _.isObject(val)
         _.each val, (subVal, subKey) ->
-          return  if subVal is false or subVal is "false"
+          if subVal is false or subVal is "false"
+            return
           if subKey.length is 1
             args.push "-" + subKey
           else
             args.push "--" + subKey.replace(/([A-Z])/g, "-$1").toLowerCase()
-          return  if subVal is true or subVal is "true"
+
+          if subVal is true or subVal is "true"
+            return
           args.push subVal + ""
         return
       args.push val + ""
@@ -67,7 +68,8 @@ class RRDTool extends Base
               found = true
               return
 
-      options[defaultKey] = defaultVal  unless found
+      if not found
+        options[defaultKey] = defaultVal
 
     options
 
@@ -97,7 +99,7 @@ class RRDTool extends Base
     unless fs.existsSync(rrdFile)
 
       # rrd file doesn not exist (yet)
-      @debug "rrd file doesn not exist (yet) " + rrdFile
+      @debug "rrd file does not exist (yet) %s", rrdFile
       return cb(null, null)
     @exe "info", options, (err, stdout) =>
       return cb(err)  if err
