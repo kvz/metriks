@@ -30,15 +30,12 @@ class PluginManager extends Base
   _timers : []
   _plugins: {}
 
-  _validate: (config) ->
-    if not config.pluginDir?
+  _validate: () ->
+    if not @pluginDir?
       return "Please set the pluginDir"
     return true
 
   find: (pattern, cb) ->
-    console.log
-      thi: this
-
     @_loadAll false, (err) =>
       if err
         throw err
@@ -103,20 +100,21 @@ class PluginManager extends Base
     # Load plugin configuration from disk
     if _.keys(@_plugins).length and reset isnt true
       return cb null
-    unless fs.existsSync(@pluginDir)
+    if not fs.existsSync @pluginDir
       return cb Err.new("Plugin directory %s does not exist", @pluginDir)
+
     glob @pluginDir + "/*", {}, (err, files) =>
       if err
         return cb err
 
       for pluginFile in files
-        plugin = new Plugin
+        plugin = new Plugin(
           pluginFile  : pluginFile
           rrdDir      : @rrdDir
           pngDir      : @pngDir
           autoWritePng: @autoWritePng
           autoUploadS3: @autoUploadS3
-          cli         : @cli
+        )
 
         plugin.reload (err) =>
           if err

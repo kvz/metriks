@@ -76,6 +76,7 @@ class RRD extends Base
 
   defaultLine: element: "LINE1"
   name       : ""
+  rrdtool    : {}
   graph      : {}
   graphStore : {}
   line       : {}
@@ -85,25 +86,31 @@ class RRD extends Base
   rrdFile    : null
   pngFile    : null
 
-  _setup: (config) ->
-    super config
-    @rrdtool = new RRDTool(cli: @cli)
+  _validate: () ->
+    if not @rrdDir
+      return "Please set the rrdDir"
+    if not @pngDir
+      return "Please set the pngDir"
+    return true
+
+  _setup: () ->
+    @rrdtool = new RRDTool()
     @graph   = {}
-    _.extend @graph, @defaultGraph, config.graph
+    _.extend @graph, @defaultGraph, @graph
     @graphStore = {}
-    _.extend @graphStore, @defaultGraphStore, config.graphStore
+    _.extend @graphStore, @defaultGraphStore, @graphStore
 
     # Allow complementing line defaults using wildcards
-    if config.line
-      _.extend @defaultLine, config.line["*"]
-      delete config.line["*"]
-    if config.lineStore
-      _.extend @defaultLineStore, config.lineStore["*"]
-      delete config.lineStore["*"]
+    if @line
+      _.extend @defaultLine, @line["*"]
+      delete @line["*"]
+    if @lineStore
+      _.extend @defaultLineStore, @lineStore["*"]
+      delete @lineStore["*"]
 
     # Save line properties under dsName compatible names
     cleanLine = {}
-    _.each config.line, (lineProperties, dsName) ->
+    _.each @line, (lineProperties, dsName) ->
       # Merging defaults can only be done at runtime
       cleanDsName = (dsName + "").replace(/[^a-zA-Z0-9_]/g, "_").substr(0, 19)
       cleanLine[cleanDsName] = lineProperties
@@ -112,7 +119,7 @@ class RRD extends Base
 
     # Save lineStore properties under dsName compatible names
     cleanLineStore = {}
-    _.each config.lineStore, (lineProperties, dsName) ->
+    _.each @lineStore, (lineProperties, dsName) ->
       # Merging defaults can only be done at runtime
       cleanDsName = (dsName + "").replace(/[^a-zA-Z0-9_]/g, "_").substr(0, 19)
       cleanLineStore[cleanDsName] = lineProperties
@@ -128,13 +135,6 @@ class RRD extends Base
       @pngFile = @fmt("%s/%s-%s.png", @name, os.hostname(), @name)
     if @pngFile.substr(0, 1) isnt "/"
       @pngFile = @pngDir + "/" + @pngFile
-
-  _validate: (config) ->
-    if not config.rrdDir
-      return "Please set the rrdDir"
-    if not config.pngDir
-      return "Please set the pngDir"
-    return true
 
   _mkdir: (cb) ->
     rrdDir = path.dirname(@rrdFile)

@@ -1,5 +1,6 @@
 _    = require "underscore"
 util = require "util"
+cli  = require("cli").enable("status", "help", "version", "glob", "timeout")
 
 class ErrorFmt
   @new: (args...) ->
@@ -24,27 +25,25 @@ class Base
       console.log "OK:    " + str
 
   constructor: (config) ->
+    @cli = cli
     @set config
 
   set: (config) ->
-    config = @_defaults config
-    config = @_normalize config
-    result = @_validate config
-    if result != true
-      throw ErrorFmt.new "%s validation error. %s", @constructor.name, result
-    @_setup config
+    _.extend(this, config)
+    @_normalize()
+    valid = @_validate()
+    if valid != true
+      throw ErrorFmt.new "%s validation error. %s", @constructor.name, valid
+    @_setup()
 
-  _defaults: (config) ->
-    return config
+  _normalize: () ->
+    return
 
-  _normalize: (config) ->
-    return config
-
-  _validate: (config) ->
+  _validate: () ->
     return true
 
-  _setup: (config) ->
-    _.extend this, config
+  _setup: () ->
+    return
 
   fmt: (args...) ->
     return util.format.apply this, args

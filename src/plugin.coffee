@@ -15,17 +15,46 @@ Err                = require("./base").ErrorFmt
 _.templateSettings = interpolate: /\{(.+?)\}/g
 
 class Plugin extends Base
-  interval    : "60"
+  interval    : 60
   enabled     : true
   executable  : true
   pluginFile  : null
   autoWritePng: null
   autoUploadS3: null
 
+  _normalize: () ->
+    if not @timeout
+      # Set plugin timeout to be slightly lower than interval if possible
+      @timeout = @interval - 10
+      if @timeout < 10
+        @timeout = 50
+
+    if @enabled is "false"
+      @enabled = false
+    else
+      @enabled = true
+
+    @interval = @interval * 1
+
+  _setup: () ->
+    # Fixed plugin options
+    @name       = path.basename(@pluginFile, ".sh")
+    @executable = !!(1 & parseInt((fs.statSync(@pluginFile).mode & parseInt("777", 8)).toString(8)[0]))
+    @rrd        = new RRD
+      rrdDir    : @rrdDir
+      pngDir    : @pngDir
+      name      : @name
+      graph     : @graph
+      graphStore: @graphStore
+      line      : @line
+      lineStore : @lineStore
+
   # Parse options from source's comments
   reload: (cb) ->
-    @info "Loading plugin %s. This also executes it with 'config' parameter so you can print dynamic config. ",
+    @info "Loading plugin %s. This also executes it with 'config'
+      parameter so you can print dynamic config. ",
       @pluginFile
+
     opts =
       encoding  : "utf8"
       timeout   : 10 * 1000
@@ -36,7 +65,8 @@ class Plugin extends Base
 
     exec @pluginFile + " config", opts, (err, stdout, stderr) =>
       if err
-        return cb Err.new("Cannot execute plugin %s. If you want to disable please set '# config.enable: false'. %s %s %s",
+        return cb Err.new("Cannot execute plugin %s. If you want to
+          disable please set '# config.enable: false'. %s %s %s",
           @pluginFile, stderr, err, stdout)
 
       config = @_strToConfig stdout
@@ -59,34 +89,6 @@ class Plugin extends Base
       object   : true
 
     return nested
-
-  _setup: (config) ->
-    super config
-    # Fixed plugin options
-    @name       = path.basename(@pluginFile, ".sh")
-    @executable = !!(1 & parseInt((fs.statSync(@pluginFile).mode & parseInt("777", 8)).toString(8)[0]))
-    if @enabled is "false"
-      @enabled = false
-    else
-      @enabled = true
-
-    if not @timeout
-      # Set plugin timeout to be slightly lower than interval if possible
-      @timeout = @interval - 10
-      if @timeout < 10
-        @timeout  = 50
-
-    @interval = @interval * 1
-    @rrd      = new RRD(
-      rrdDir    : @rrdDir
-      pngDir    : @pngDir
-      cli       : @cli
-      name      : @name
-      graph     : config.graph
-      graphStore: config.graphStore
-      line      : config.line
-      lineStore : config.lineStore
-    )
 
   # Loop a single plugin based on options.interval
   run: (cb) ->
@@ -111,8 +113,8 @@ class Plugin extends Base
 
     async.waterfall tasks, (err) =>
       if err
-        return @error("failure %s.", err)
-      @info("%s task(s) for plugin %s complete", tasks.length, @name)
+        return @error "failure %s.", err
+      @info "%s task(s) for plugin %s complete", tasks.length, @name
       cb null
 
   parseSeries: (stdout, stderr, cb) ->
@@ -136,7 +138,7 @@ class Plugin extends Base
 
       # Sanitize and push
       series.push
-        value: @rrd.rrdtool.toVal(value)
+        value : @rrd.rrdtool.toVal(value)
         dsName: @rrd.rrdtool.toDatasourceName(dsName)
 
 
@@ -145,7 +147,7 @@ class Plugin extends Base
     if series.length is 1 and @rrd.rrdtool.isNumeric(series[0].dsName)
       if not @name
         return cb Err.new("Plugin has no name when it was needed to label simplistic series")
-      series[0].dsName = @rrd.rrdtool.toDatasourceName(@name)
+      series[0].dsName = @rrd.rrdtool.toDatasourceName @name
 
     cb null, series
 
@@ -169,7 +171,8 @@ class Plugin extends Base
       , (stdout, stderr, callback) =>
         # Convert output to series
         @parseSeries stdout, stderr, (err, series) ->
-          return callback(err)  if err
+          if err
+            return callback(err)
           callback null, series
       , (series, callback) =>
         @rrd.update series, callback
@@ -205,9 +208,10 @@ class Plugin extends Base
 
         client.putFile file, dst, headers, (err, res) ->
           if err or res.statusCode isnt 200
-            return cb(Err.new("Error while uploading %s. code: %s. %s",
-              file, res?.statusCode, err))
+            return cb Err.new("Error while uploading %s. code: %s. %s",
+              file, res?.statusCode, err)
           res.resume()
-          cb null  if ++uploaded >= needed
+          if ++uploaded >= needed
+            cb null
 
 exports.Plugin = Plugin
