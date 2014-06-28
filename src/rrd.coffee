@@ -215,23 +215,26 @@ class RRD extends Base
       (callback) =>
         # Mkdir
         pngDir = path.dirname(@pngFile)
-        return callback(null)  if fs.existsSync(pngDir)
+        if fs.existsSync(pngDir)
+          return callback(null)
         @info("Creating directory %s", pngDir)
         mkdirp pngDir, (err) ->
-          return callback(err)  if err
+          if err
+            return callback(err)
           callback null
 
       , (callback) =>
         @rrdtool.info @rrdFile, [], (err, info) =>
-          return callback(err)  if err
+          if err
+            return callback(err)
 
           # Leave out any graph object property that's not a true rrd graph parameter
           rrdGraphOptions = []
           rrdGraphOptions.push @graph
 
           # Apply theme border/canvas/font colors
-          _.each @theme, (themeColor, themeKey) =>
-            if _.isString(themeColor)
+          for themeKey, themeColor of @theme
+            if typeof themeColor == "string"
               rrdGraphOptions.push "--color"
               rrdGraphOptions.push themeKey + themeColor
 
@@ -245,7 +248,8 @@ class RRD extends Base
 
       , (rrdGraphOptions, callback) =>
         @rrdtool.graph @pngFile, rrdGraphOptions, (err, output) ->
-          return callback(err)  if err
+          if err
+            return callback(err)
           callback null
 
     ], (err) ->

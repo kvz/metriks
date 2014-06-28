@@ -10,11 +10,10 @@ class WebServer extends Base
 
   start: ->
     server = connect()
-    server.use connect.static(@pngDir,
+    server.use connect.static @pngDir,
       hidden: false
-    )
-    server.use connect.directory(@pngDir, {})
+    server.use connect.directory @pngDir, {}
     server.listen @webPort, ->
-      @info("Serving %s on port %s", @pngDir, @webPort)
+      @info "Serving %s on port %s", @pngDir, @webPort
 
 exports.WebServer = WebServer

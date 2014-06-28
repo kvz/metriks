@@ -42,20 +42,25 @@ class PluginManager extends Base
     @_loadAll false, (err) =>
       if err
         throw err
+
       for key of @_plugins
         plugin = @_plugins[key]
         if plugin.name is pattern
-          return cb(null, plugin)
+          return cb null, plugin
         if plugin.rrd.rrdFile is pattern
-          return cb(null, plugin)
+          return cb null, plugin
+
       cb null, null
 
   graph: (pattern) ->
     @_loadAll false, (err) =>
-      throw err  if err
+      if err
+        throw err
+
       plugin = @find(pattern)
       @_writePNG plugin, (err) =>
-        throw err  if err
+        if err
+          throw err
         @info("open %s", plugin.pngFile)
 
   _loop: (plugin, cb) =>
@@ -66,7 +71,7 @@ class PluginManager extends Base
     # Reschedule
     @_timers.push setTimeout(=>
       @_q.push plugin
-          , plugin.interval * 1000)
+    , plugin.interval * 1000)
 
   start: ->
     @_loadAll false, (err) =>
@@ -97,23 +102,26 @@ class PluginManager extends Base
   _loadAll: (reset, cb) ->
     # Load plugin configuration from disk
     if _.keys(@_plugins).length and reset isnt true
-      return cb(null)
+      return cb null
     unless fs.existsSync(@pluginDir)
-      return cb(Err.new("Plugin directory %s does not exist", @pluginDir))
+      return cb Err.new("Plugin directory %s does not exist", @pluginDir)
     glob @pluginDir + "/*", {}, (err, files) =>
-      return cb(err)  if err
-      files.forEach (pluginFile) =>
-        plugin = new Plugin(
+      if err
+        return cb err
+
+      for pluginFile in files
+        plugin = new Plugin
           pluginFile  : pluginFile
           rrdDir      : @rrdDir
           pngDir      : @pngDir
           autoWritePng: @autoWritePng
           autoUploadS3: @autoUploadS3
           cli         : @cli
-        )
+
         plugin.reload (err) =>
           if err
-            return cb(err)
+            return cb err
+
           @_plugins[plugin.name] = plugin
           if _.keys(@_plugins).length is files.length
             cb null

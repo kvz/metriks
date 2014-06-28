@@ -48,7 +48,7 @@ class Plugin extends Base
     flat         = {}
     commentLines = str.match(/^#(.*)$/g)
     if commentLines and commentLines.length
-      commentLines.forEach (line) ->
+      for line in commentLines
         cfgKey       = line.match(/^#\s*([^:]+)\s*/)[1]
         cfgVal       = line.match(/:\s*(.*)\s*$/)[1]
         flat[cfgKey] = cfgVal
@@ -118,9 +118,9 @@ class Plugin extends Base
   parseSeries: (stdout, stderr, cb) ->
     series = []
     cnt    = 0
-    stdout.trim().split("\n").forEach (line) =>
+    for line in stdout.trim().split "\n"
       if line.substr(0, 1) is "#"
-        return
+        continue
       columns = line.trim().split(/\s+/)
       dsName  = undefined
       value   = undefined
@@ -143,7 +143,7 @@ class Plugin extends Base
     # If there is 1 row and no column name, name the line after the graph.
     # e.g.: 'uptime'
     if series.length is 1 and @rrd.rrdtool.isNumeric(series[0].dsName)
-      unless @name
+      if not @name
         return cb Err.new("Plugin has no name when it was needed to label simplistic series")
       series[0].dsName = @rrd.rrdtool.toDatasourceName(@name)
 

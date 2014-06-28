@@ -100,9 +100,10 @@ class RRDTool extends Base
 
       # rrd file doesn not exist (yet)
       @debug "rrd file does not exist (yet) %s", rrdFile
-      return cb(null, null)
+      return cb null, null
     @exe "info", options, (err, stdout) =>
-      return cb(err)  if err
+      if err
+        return cb err
       info = @explodeTree(stdout)
       unless "ds" of info
         @debug
@@ -117,10 +118,10 @@ class RRDTool extends Base
   explodeTree: (buf) ->
     flat = {}
     buf.split("\n").forEach (line) =>
-      parts = line.split(" = ")
-      rawKey = parts.shift()
-      rawVal = parts.join(" = ")
-      key = rawKey.replace(/[\.\[\]]+/g, ".").replace(/^\[/, "").replace(/\]$/, "")
+      parts     = line.split(" = ")
+      rawKey    = parts.shift()
+      rawVal    = parts.join(" = ")
+      key       = rawKey.replace(/[\.\[\]]+/g, ".").replace(/^\[/, "").replace(/\]$/, "")
       flat[key] = @toVal(rawVal)
 
     unflatten flat
@@ -130,7 +131,8 @@ class RRDTool extends Base
       val = val * 1
     else
       val = (val + "").trim()
-      val = val.replace(/(^"|"$)/g, "")  if val.substr(0, 1) is "\"" and val.substr(-1) is "\""
+      if val.substr(0, 1) is "\"" and val.substr(-1) is "\""
+        val = val.replace(/(^"|"$)/g, "")
     val
 
 
