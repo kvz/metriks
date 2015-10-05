@@ -145,7 +145,7 @@ You can echo any of these in your `plugin.sh` to hangle behavior of metriks, her
 Metriks is still in early stages of development, here's what needs to be done still:
 
  - [ ] Offer an API that so that you can programatically add values in Nodejs programs. e.g. `require('metriks').graph('df').addSeries([{'/': '50%'}])`
- - [ ] Offer *some* way to pipe data into it. I think STDIN vs using webserver as a dependency for that to accomodate decentralized / local preference
+ - [ ] Offer *some* way to pipe data into it. I think STDIN vs using webserver as a dependency for that to accommodate decentralized / local preference
    - Should already create a graph without the need to define a plugin or run a daemon
    - Hence should trigger graph->upload
    - Just check if graph hasn't been written in the last 60 seconds to avoid overhead
