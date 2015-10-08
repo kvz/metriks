@@ -17,7 +17,7 @@
     "cli": "0.4.5",
     "lru-cache": "2.7.0",
     "sigmund": "1.0.0",
-    "connect": "2.13.0",
+    "connect": "3.4.0",
     "knox": "0.8.9"
   },
   "devDependencies": {},
