@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "async": "1.4.2",
-    "glob": "3.2.8",
+    "glob": "6.0.1",
     "underscore": "1.5.2",
     "mkdirp": "0.5.1",
     "flat": "1.2.0",
