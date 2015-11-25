@@ -15,7 +15,7 @@
     "flat": "1.2.0",
     "mocha": "1.17.0",
     "cli": "0.4.5",
-    "lru-cache": "2.7.0",
+    "lru-cache": "2.7.3",
     "sigmund": "1.0.0",
     "connect": "3.4.0",
     "knox": "0.8.9"
