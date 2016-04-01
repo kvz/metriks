@@ -104,7 +104,7 @@ The default permission is `public-read`, so be careful with that.
 
 ### Configuration
 
-You can echo any of these in your `plugin.sh` to hangle behavior of metriks, here are the defaults so you might as well set none of these, and get the same results:
+You can echo any of these in your `plugin.sh` to change behavior of metriks, here are the defaults so you might as well set none of these, and get the same results:
 
 ```bash
 # config->interval  : 60
