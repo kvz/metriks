@@ -1,3 +1,7 @@
+# [UNMAINTAINED] 
+
+I might revisit this hobby project in the future, but I currently do not have time to maintain this.
+
 # Metriks
 
 <!-- badges/ -->
