@@ -8,7 +8,7 @@
     "node": ">= 0.8.0"
   },
   "dependencies": {
-    "async": "1.4.2",
+    "async": "1.5.0",
     "glob": "3.2.8",
     "underscore": "1.5.2",
     "mkdirp": "0.5.1",
